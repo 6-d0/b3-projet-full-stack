@@ -1,0 +1,15 @@
+http://localhost:9000 {
+	handle /api/* {
+		reverse_proxy localhost:8000
+	}
+	handle /admin/* {
+		reverse_proxy localhost:8000
+	}
+	handle /auth/* {
+		reverse_proxy localhost:8000
+	}
+
+	handle {
+		reverse_proxy localhost:3000
+	}
+}

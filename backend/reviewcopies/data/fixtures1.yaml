@@ -1,0 +1,280 @@
+User:
+    - username: admin
+      pk: 1
+      password: motdepasse
+      uuid: 6764c4c5-2dd1-4d17-a209-b72854ef1980
+      is_staff: true
+      is_superuser: true
+
+    - username: h000123
+      first_name: Isabelle
+      last_name: Dony
+      email: isabelle.dony@hers.be
+      password: motdepasse
+      pk: 2
+      uuid: c5601ac9-6735-4e66-99f6-6a1f20c0cc3b
+
+    - username: h00051
+      first_name: Cédric
+      last_name: Peeters
+      email: cedric.peeters@hers.be
+      password: motdepasse
+      pk: 3
+      uuid: 3098cafc-8685-4b70-9dbc-0a06d3bdddfb
+
+    - username: h003051
+      first_name: Benoit
+      last_name: Burlion
+      email: benoit.burlion@hers.be
+      pk: 4
+      password: motdepasse
+      uuid: 96d8677a-a5bc-4942-b073-3d3d91a2b943
+
+    - username: h001252
+      first_name: Laurent
+      last_name: Schalkwijk
+      email: laurent.schalkwijk@hers.be
+      pk: 5
+      password: motdepasse
+      uuid: 9ce70e54-27ca-40c1-a36e-d7f90dfe95d5
+
+    - username: h000260
+      first_name: Vincent
+      last_name: Spies
+      email: vincent.spies@hers.be
+      pk: 6
+      password: motdepasse
+      uuid: 530f3336-a63a-4781-a12a-c489ac62fbb8
+
+    - username: h000095
+      first_name: France-Lise
+      last_name: Caron
+      email: france.lise.caron@hers.be
+      pk: 7
+      password: motdepasse
+      uuid: 1ee7486f-0f43-403c-b2fc-3f0ef702a96c
+
+    - username: h000209
+      first_name: Patricia
+      last_name: Capelle
+      email: patricia.capelle@hers.be
+      pk: 11
+      password: motdepasse
+      uuid: bf4b3d3d-fcaf-452c-93b7-a2c59f13ff0a
+
+    - username: e111111
+      first_name: Mathias
+      last_name: Laurent
+      email: mathis.laurent@student.hers.be
+      pk: 8
+      password: motdepasse
+      uuid: 60fcbf5b-0032-4d3c-b565-715df5d9e9af
+
+    - username: e222222
+      first_name: Daniel
+      last_name: Gillet
+      email: dainel.gillet@student.hers.be
+      pk: 9
+      password: motdepasse
+      uuid: 2c08e4b9-cfec-4561-9668-23d70dc0b5d9
+
+    - username: e333333
+      first_name: Gaetano
+      last_name: Demoulin
+      email: gaetano.demoulin@student.hers.be
+      pk: 10
+      password: motdepasse
+      uuid: 3e5a9a1e-c316-4539-beb9-c4c5afc73bee
+
+Branch:
+    - name: Bachelier en informatique, orientation developpement d'applications
+      pk: 1
+      uuid: 5d73bb04-e7eb-4107-80ca-7ec811f11b8f
+
+    - name: Bachelier en comptabilite
+      pk: 2
+      uuid: 7cad1420-83e8-4851-a609-dcc1f9ac1cfe
+
+    - name: Bachelier en comptabilite
+      pk: 3
+
+    - name: Bachelier en management du tourisme et des loisirs
+      pk: 4
+      uuid: 3b5ed962-b500-4ae9-8338-9ff4d1006281
+
+Session:
+    - name: Session de janvier 2025
+      pk: 1
+      uuid: b88d1a5d-6d6a-47b3-9379-a3552d137148
+
+Course:
+    - name: "1INFO: Methode de programmation"
+      pk: 1
+      teacher_id: 2
+      m2m:
+          - branches: 1
+          - sessions: 1
+
+    - name: "1INFO: Architecture"
+      pk: 2
+      teacher_id: 4
+      m2m:
+          - branches: 1
+          - sessions: 1
+
+    - name: "1INFO: Analyse UML"
+      pk: 3
+      teacher_id: 4
+      m2m:
+          - branches: 1
+          - sessions: 1
+
+    - name: "2INFO: Crypto"
+      pk: 4
+      teacher_id: 6
+      m2m:
+          - branches: 1
+          - sessions: 1
+
+    - name: "1INFO: Systeme"
+      pk: 5
+      teacher_id: 6
+      m2m:
+          - branches: 1
+          - sessions: 1
+
+    - name: "1INFO: Math"
+      pk: 6
+      teacher_id: 6
+      m2m:
+          - branches: 1
+          - sessions: 1
+
+    - name: "2INFO: Data Science"
+      pk: 7
+      teacher_id: 6
+      m2m:
+          - branches: 1
+          - sessions: 1
+
+    - name: "2INFO: Developpement WEB"
+      pk: 8
+      teacher_id: 6
+      m2m:
+          - branches: 1
+          - sessions: 1
+
+    - name: "1COMPTA: Marketing management"
+      pk: 11
+      teacher_id: 7
+      m2m:
+          - branches: 2
+          - sessions: 1
+
+    - name: "1COMPTA: Droit des societes commerciales"
+      pk: 9
+      teacher_id: 11
+      m2m:
+          - branches: 2
+          - sessions: 1
+
+    - name: "2INFO: Droit RGPD"
+      pk: 10
+      teacher_id: 11
+      m2m:
+          - branches: 1
+          - sessions: 1
+
+Schedule:
+    - date: 2025-01-22
+      can_subscribe: true
+      classroom: M3
+      can_subscribe_until: null
+      uuid: 1f67aa27-9d50-4bd0-9d30-10e0c94acf17
+      session_id: 1
+      teacher_id: 2
+
+    - date: 2025-01-22
+      can_subscribe: true
+      classroom: B4
+      can_subscribe_until: null
+      uuid: ef9234aa-5f15-44c0-a65c-36c9562965cc
+      session_id: 1
+      teacher_id: 2
+
+    - date: 2025-01-22
+      can_subscribe: true
+      classroom: M3
+      can_subscribe_until: null
+      uuid: 3993bf57-e57f-4fd4-bd0e-8aaf92634358
+      session_id: 1
+      teacher_id: 6
+
+    - date: 2025-01-22
+      can_subscribe: true
+      classroom: M4
+      can_subscribe_until: null
+      uuid: 7c8f8295-e98d-4cbc-8b56-cd711e7667c4
+      session_id: 1
+      teacher_id: 7
+
+Timeslot:
+    - begin_time: 2025-01-22T08:00:00+01:00
+      end_time: 2025-01-22T08:15:00+01:00
+      pk: 1
+      uuid: 1cc96002-44d7-44e8-b791-79dafa84c22f
+      schedule_id: 1
+
+    - begin_time: 2025-01-22T08:15:00+01:00
+      end_time: 2025-01-22T08:30:00+01:00
+      pk: 2
+      uuid: 4e1e960c-84e8-4b84-a1d1-8180ebcf460e
+      schedule_id: 1
+
+    - begin_time: 2025-01-22T08:30:00+01:00
+      end_time: 2025-01-22T08:45:00+01:00
+      pk: 3
+      uuid: d7c8bed3-674e-429d-9b1f-556a6e6f1da5
+      schedule_id: 1
+
+    - begin_time: 2025-01-22T08:45:00+01:00
+      end_time: 2025-01-22T09:00:00+01:00
+      pk: 4
+      uuid: 5b7b2f14-b03d-40aa-9525-1c877edae588
+      schedule_id: 1
+
+    - begin_time: 2025-01-22T09:00:00+01:00
+      end_time: 2025-01-22T09:15:00+01:00
+      pk: 5
+      uuid: 892b05fe-b8be-4aba-ba19-8e41b82658ef
+      schedule_id: 1
+
+    - begin_time: 2025-01-22T09:15:00+01:00
+      end_time: 2025-01-22T09:30:00+01:00
+      pk: 6
+      uuid: 1c1eefe6-6bb8-4bf6-a9e4-cb20d15447a9
+      schedule_id: 1
+
+    - begin_time: 2025-01-22T09:30:00+01:00
+      end_time: 2025-01-22T09:45:00+01:00
+      pk: 7
+      uuid: 8cf795c1-67ec-4686-93e4-4a0c1b810322
+      schedule_id: 1
+
+    - begin_time: 2025-01-22T10:00:00+01:00
+      end_time: 2025-01-22T10:15:00+01:00
+      pk: 8
+      uuid: 56cf728b-8afe-4ae7-b707-5b685aacb6b0
+      schedule_id: 3
+
+    - begin_time: 2025-01-22T10:15:00+01:00
+      end_time: 2025-01-22T10:30:00+01:00
+      pk: 9
+      uuid: d9b6e166-08f7-4efe-807e-d49bb7b35489
+      schedule_id: 3
+
+    - begin_time: 2025-01-22T10:30:00+01:00
+      end_time: 2025-01-22T10:45:00+01:00
+      pk: 10
+      uuid: 86000fd3-b180-4fd5-a69c-c354b5cb978b
+      schedule_id: 3
