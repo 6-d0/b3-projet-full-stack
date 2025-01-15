@@ -54,6 +54,13 @@ schedule_list_view = ScheduleListView.as_view()
 
 logger = logging.getLogger(__name__)
 
+class ScheduleByUUID(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        schedule = get_object_or_404(models.Schedule, uuid=kwargs['uuid'])
+        serializer = ScheduleListSerializer(schedule)
+        return Response(serializer.data)
+
 class TeacherSchedulesView(APIView):
     permission_classes = [IsAuthenticated]
 

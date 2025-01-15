@@ -13,6 +13,8 @@
           {{ formatTime(timeslot.begin_time) }} -
           {{ formatTime(timeslot.end_time) }}
         </span>
+        <NuxtLink :to="`/timeslots/register/${schedule_slug}/${ timeslot.uuid }`" v-if="canSubscribe" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Register</NuxtLink>
+        <NuxtLink :to="`/timeslots/details/${ timeslot.uuid }`" v-if="user?.role === 'teacher'" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Details</NuxtLink>
       </li>
     </ul>
   </div>
@@ -26,6 +28,7 @@ const route = useRoute();
 var timeslots = ref<ITimeslots[] | null>(null);
 const schedule_slug = route.params.uuid_schedule.toString();
 var teacher = ref<IUser | null>(null);
+var canSubscribe = false
 
 // recup user
 import { userStore } from "~/stores/user";
@@ -49,8 +52,14 @@ const fetchTimeSlots = async (s_slug: string) => {
   }
 
   if (teacher.value && user?.username !== teacher.value.username) {
-    navigateTo("/unauthorized");
+    if(user?.role === 'teacher'){
+      navigateTo("/unauthorized");
+    }else{
+      canSubscribe = true;
+    }
   }
+  console.log(user?.role)
+  console.log(user)
 };
 
 /**

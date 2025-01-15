@@ -184,6 +184,12 @@ Course:
       m2m:
           - branches: 1
           - sessions: 1
+    - name: "3INFO: Design Pattern"
+      pk: 12
+      teacher_id: 2
+      m2m:
+          - branches: 1
+          - sessions: 1
 
 Schedule:
     - date: 2025-01-22

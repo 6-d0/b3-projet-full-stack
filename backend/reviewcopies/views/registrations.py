@@ -23,11 +23,14 @@ class AddRegistrationView(APIView):
         """
         Create the registration with post method
         """
+        print(request.data)
         course_id = request.data.get('course')
         slot_id = request.data.get('timeslot')
 
-        student = request.user
-
+        if request.data.get('student') is None:
+            student = request.user
+        else:
+            student = request.data.get('student')
         try:
             course = Course.objects.get(pk=course_id)
         except Course.DoesNotExist:

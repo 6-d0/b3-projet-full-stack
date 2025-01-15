@@ -15,7 +15,7 @@ class LoginView(KnoxLoginView):
         user = serializer.validated_data["user"]
         if str(user.username).startswith('e'):
             user.role = 'student'
-        else:
+        elif str(user.username).startswith('h'):
             user.role = 'teacher'
         user.save()
         login(request, user)

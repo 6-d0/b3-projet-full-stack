@@ -48,7 +48,7 @@
           <p class="text-sm font-normal text-gray-700 dark:text-gray-400 my-3">
             {{ schedule.classroom }}
           </p>
-          <div>
+          <div class="space-x-4">
             <span
               v-if="schedule.can_subscribe"
               class="text-center w-fit px-2 py-1 bg-green-600 text-white font-semibold rounded-lg shadow-md"
@@ -61,6 +61,7 @@
             >
               Inscription inactive
             </span>
+            <NuxtLink :to="`/schedules/${schedule.uuid}/`" class="mx-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Edit</NuxtLink>
           </div>
         </NuxtLink>
       </li>

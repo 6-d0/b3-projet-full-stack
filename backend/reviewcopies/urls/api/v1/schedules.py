@@ -2,6 +2,11 @@ import reviewcopies.views.schedules as views
 from django.urls import path
 
 urlpatterns = [
+    path(
+        "<uuid:uuid>/",
+        views.ScheduleByUUID.as_view(),
+        name="schedule-by-uuid"
+    ),
 
     path(
         "retrieve-schedule/<int:id>/",
