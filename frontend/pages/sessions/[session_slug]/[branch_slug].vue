@@ -61,7 +61,11 @@
             >
               Inscription inactive
             </span>
-            <NuxtLink :to="`/schedules/${schedule.uuid}/`" class="mx-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Edit</NuxtLink>
+            <NuxtLink
+              :to="`/schedules/${schedule.uuid}/`"
+              class="mx-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+              >Edit</NuxtLink
+            >
           </div>
         </NuxtLink>
       </li>
@@ -70,7 +74,13 @@
         v-else
         class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
       >
-        <NuxtLink :href="`/timeslots/${schedule.uuid}/`">
+        <NuxtLink
+          :href="
+            schedule.can_subscribe && hasTimeSlot(schedule.uuid)
+              ? `/timeslots/${schedule.uuid}/`
+              : '#'
+          "
+        >
           <h5 class="mb-2 text-2xl font-semibold text-gray-900 dark:text-white">
             {{ schedule.teacher.last_name.toUpperCase() }}
             {{ schedule.teacher.first_name }}
@@ -109,6 +119,7 @@ import { ref, onMounted } from "vue";
 const route = useRoute();
 const session_slug = route.params.session_slug as string;
 const branch_slug = route.params.branch_slug as string;
+const scheduleTimeslots = ref<{ [uuid: string]: ITimeslots[] }>({});
 
 // pour utiliser dans la page
 const session = ref<ISession | null>(null);
@@ -163,12 +174,27 @@ const fetchSchedules = async (branch_slug: string, session_slug: string) => {
     }
     const data = await response.json();
     schedules.value = data;
+    for (const schedule of data) {
+      const responseTimeslot = await fetch(
+        `http://localhost:9000/api/v1/timeslots/${schedule.uuid}`
+      );
+      if (responseTimeslot.ok) {
+        const timeslotData = await responseTimeslot.json();
+        scheduleTimeslots.value[schedule.uuid] = timeslotData;
+      }
+    }
   } catch (error) {
     console.error("Erreur:", error);
   } finally {
     loading.value = false;
   }
 };
+
+function hasTimeSlot(uuid: string): boolean {
+  return (
+    scheduleTimeslots.value[uuid] && scheduleTimeslots.value[uuid].length > 0
+  );
+}
 
 onMounted(() => {
   fetchSession(session_slug);

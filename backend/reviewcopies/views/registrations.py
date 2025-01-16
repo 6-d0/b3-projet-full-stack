@@ -19,25 +19,21 @@ class AddRegistrationView(APIView):
     """
     View to create a new registration
     """
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         """
         Create the registration with post method
         """
         print(request.data)
-        course_id = request.data.get('course')
-        slot_id = request.data.get('timeslot')
-
-        if request.data.get('student') is None:
-            student = request.user
-        else:
-            student = request.data.get('student')
+        course_slug = request.data.get('course')
+        slot_uuid = request.data.get('timeslot')
         try:
-            course = Course.objects.get(pk=course_id)
+            course = Course.objects.get(slug=course_slug)
         except Course.DoesNotExist:
             return Response({"error": "Course not found"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            slot = Timeslot.objects.get(id=slot_id)
+            slot = Timeslot.objects.get(uuid=slot_uuid)
         except Timeslot.DoesNotExist:
             return Response({"error": "Timeslot not found"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -46,7 +42,7 @@ class AddRegistrationView(APIView):
 
         registration_data = {
             'course': course.id,
-            'student': student.id,
+            'student': request.user.id,
             'slot': slot.id,
             'comment': request.data.get('comment', ""),
         }

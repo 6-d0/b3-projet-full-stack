@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 export const userStore = defineStore("user", {
   state: () => ({
     user: null as IUser | null, // Utilisateur actuel (ou null si non connecté)
+    token: null as string | null,
   }),
   actions: {
     async fetchUser() {

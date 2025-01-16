@@ -10,6 +10,6 @@ class User(BaseModel, AbstractUser):
         ('student', 'Student'),
         ('teacher', 'Teacher'),
     )
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, blank=True, null=True)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES,default='student')
     class Meta(BaseModel.Meta, AbstractUser.Meta):
         pass

@@ -209,7 +209,7 @@ Schedule:
       teacher_id: 2
 
     - date: 2025-01-22
-      can_subscribe: true
+      can_subscribe: false
       classroom: M3
       can_subscribe_until: null
       uuid: 3993bf57-e57f-4fd4-bd0e-8aaf92634358
