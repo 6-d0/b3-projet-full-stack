@@ -39,6 +39,7 @@ for user in user_data:
         )
         if created:
             user_instance.set_password(password)
+            user_instance.role = 'student' if user_instance.username.startswith('e') else 'teacher'
             user_instance.full_clean()
             user_instance.save()
             print(f"Utilisateur '{user_instance.username}' créé avec succès.")
