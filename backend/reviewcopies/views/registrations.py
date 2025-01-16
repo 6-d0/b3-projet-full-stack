@@ -4,9 +4,10 @@ from rest_framework import status
 from reviewcopies.models import Registration, Course, Timeslot
 from reviewcopies.serializers.registrations import RegistrationSerializer, AddRegistrationSerializer
 from rest_framework.permissions import IsAuthenticated
+from reviewcopies.permissions import IsStudent, IsTeacher
 
 
-class UserRegistrationsView(APIView):
+class AllRegistrationsView(APIView):
     """
     Get all registrations
     """
@@ -15,6 +16,16 @@ class UserRegistrationsView(APIView):
         serializer = RegistrationSerializer(registrations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class UserRegistrationsView(APIView):
+    """
+    get registration linked to a user
+    """
+    permission_classes = [IsAuthenticated, IsStudent] 
+    def get(self, request):
+        registrations = Registration.objects.filter(student=request.user)
+        serializer = RegistrationSerializer(registrations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 class AddRegistrationView(APIView):
     """
     View to create a new registration

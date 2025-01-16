@@ -1,11 +1,11 @@
 from rest_framework.views import APIView
+from django.db.models import Exists, OuterRef
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-
-from reviewcopies.models import Timeslot, Schedule
+from reviewcopies.models import Timeslot, Schedule, Registration
 from reviewcopies.serializers.timeslots import TimeslotSerializer
 from datetime import datetime, timedelta
 from django.utils.dateparse import parse_datetime
@@ -136,3 +136,17 @@ class TimeslotsCreateView(APIView):
 
         serializer = TimeslotSerializer(timeslots, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class AvailableTimeSlotView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        available_timeslots = Timeslot.objects.filter(
+            schedule__uuid=kwargs["uuid"],
+        ).annotate(
+            has_registration=Exists(Registration.objects.filter(slot=OuterRef('pk')))
+        ).filter(has_registration=False)
+
+        serializer = TimeslotSerializer(available_timeslots, many=True)
+        return Response(serializer.data)
