@@ -35,12 +35,12 @@ import { userStore } from "~/stores/user";
 const user = userStore().user;
 
 /**
- * récupère les timeslots d'un schedule
+ * récupère les timeslots d'un schedule, si c'est un professeur, recupère tout, sinon, seulement ceux disponibles
  * @param s_slug le slug du schedule
  */
 const fetchTimeSlots = async (s_slug: string) => {
   const { data: atimeslot } = await useAPI<ITimeslots[]>(
-    `/timeslots/${s_slug}`
+    `/timeslots/${s_slug}/${user?.role === "student"?"available":""}`
   );
   timeslots.value = atimeslot.value;
 
@@ -58,8 +58,6 @@ const fetchTimeSlots = async (s_slug: string) => {
       canSubscribe = true;
     }
   }
-  console.log(user?.role)
-  console.log(user)
 };
 
 /**

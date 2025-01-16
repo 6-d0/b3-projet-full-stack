@@ -23,6 +23,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   if (requiredRoles.length != 0 && !requiredRoles.includes(userRole)) {
     return await navigateTo("/unauthorized/");
   } else {
+    console.log(requiredRoles.length)
     console.log(`c'est ok ${store.user.role}`);
   }
 });

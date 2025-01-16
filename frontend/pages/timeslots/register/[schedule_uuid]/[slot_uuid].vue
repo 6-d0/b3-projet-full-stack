@@ -64,11 +64,12 @@ import authGlobal from "~/middleware/auth.global";
 
 // recuperer user
 import { userStore } from "~/stores/user";
+
 export default {
   setup() {
     definePageMeta({
       middleware: authGlobal,
-      requiredRole: "student",
+      roles: ["student"],
     });
     const route = useRoute();
     const slot_uuid = route.params.slot_uuid as string;
@@ -175,7 +176,7 @@ export default {
       courseSelect,
       formatTime,
       saveRegistration,
-      definePageMeta,
+      definePageMeta
     };
   },
 };
