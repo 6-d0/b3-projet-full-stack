@@ -1,21 +1,15 @@
 <script setup lang="ts">
 import Toaster from "@/components/ui/toast/Toaster.vue";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast/use-toast";
 import { reactive, ref, computed, watch } from "vue";
-import { Pencil, Save } from "lucide-vue-next";
-import Navbar from "~/components/ui/navbar/Navbar.vue";
 
-const { toast } = useToast();
-const inputRefs: { [index: number]: HTMLInputElement } = {};
 const token = userStore().token;
 
 const date = new Date("2025-01-01");
 const canSubscribe = ref<Boolean | null>(false);
-const startTime = ref("09:00");
+const startTime = ref("08:00");
 const rangeTime = ref(15);
-const endTime = ref("12:00");
+const endTime = ref("09:00");
 const pauseTime = ref(0);
 
 interface ITimeSlot {
@@ -130,7 +124,6 @@ const saveSchedule = async (): Promise<number | undefined> => {
     },
     credentials: "include",
   });
-  console.log(response.data.value?.teacher);
   return response.data.value?.pk;
 };
 
@@ -161,17 +154,11 @@ const saveTimeslots = async (pk: number) => {
     },
     credentials: "include",
   });
-  console.log(response.data.value);
-  console.log(response.error.value);
-  console.log(data);
 };
 const save = async (): Promise<void> => {
   const pk = await saveSchedule();
   if (pk) {
-    console.log(pk);
     saveTimeslots(pk);
-  } else {
-    console.log("Erreur : Le schedule n'a pas pu être créé.");
   }
 };
 
@@ -181,9 +168,8 @@ watch([startTime, endTime, pauseTime, rangeTime], () => {
 
 const selectedSession = ref<ISession>();
 const selectedDate = ref<Date>();
-onMounted(() => {
-  fetchSession();
-});
+
+fetchSession();
 </script>
 
 <template>
@@ -191,126 +177,166 @@ onMounted(() => {
   <Toaster />
 
   <form
-    class="container bg-gray-50 max-w-[40vw] mx-auto p-6 rounded-lg shadow-md"
+    class="container bg-white max-w-[40vw] mx-auto p-8 rounded-lg shadow-xl"
     @submit.prevent="save"
   >
-    <div class="sm:col-span-3">
-    <label for="session" class="text-sm font-medium text-gray-700 mb-2">
-        Session:
-    </label>
-      <div class="mt-2 grid grid-cols-1">
-        <select name="session" id="session" autocomplete="session-name" v-model="selectedSession" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" required>
-          <option
-            class="text-base"
-            v-for="session in sessions"
-            :value="session.pk"
-            :key="session.pk"
-            selected
+    <div class="space-y-6">
+      <!-- Session Select -->
+      <div class="flex flex-col">
+        <label for="session" class="text-sm font-semibold text-gray-700 mb-2">
+          Session:
+        </label>
+        <div class="relative">
+          <select
+            name="session"
+            id="session"
+            autocomplete="session-name"
+            v-model="selectedSession"
+            class="block w-full appearance-none rounded-md border border-gray-300 bg-white py-2 px-3 text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600"
+            required
           >
-            {{ session.name }}
-          </option>
-        </select>
-        <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
-              <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-            </svg>
+            <option
+              class="text-base"
+              v-for="session in sessions"
+              :value="session.pk"
+              :key="session.pk"
+            >
+              {{ session.name }}
+            </option>
+          </select>
+          <svg
+            class="pointer-events-none absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5"
+            fill="currentColor"
+            viewBox="0 0 16 16"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </div>
       </div>
 
+      <!-- Date Picker -->
       <div class="flex flex-col">
-        <label for="session" class="text-sm font-medium text-gray-700 mb-2">
+        <label for="session" class="text-sm font-semibold text-gray-700 mb-2">
           Date:
         </label>
-        <input type="date" v-model="selectedDate" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" required />
+        <input
+          type="date"
+          v-model="selectedDate"
+          class="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600"
+          required
+        />
       </div>
 
-      <div class="flex flex-col">
-        <label for="session" class="text-sm font-medium text-gray-700 mb-2">
+      <div class="flex items-center space-x-2">
+        <label
+          for="can-subscribe"
+          class="text-sm font-semibold text-gray-700 mb-2"
+        >
           Can Subscribe:
         </label>
-        <input type="checkbox" v-model="canSubscribe" />
-      </div>
-
-      <div class="flex flex-col">
-        <label for="start-time" class="text-sm font-medium text-gray-700 mb-2">
-          Début:
-        </label>
-        <Input
-          id="start-time"
-          v-model="startTime"
-          type="time"
-          class="h-10 w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+        <input
+          type="checkbox"
+          v-model="canSubscribe"
+          class="form-checkbox h-5 w-5 text-indigo-600"
         />
       </div>
 
       <div class="flex flex-col">
-        <label for="pause-time" class="text-sm font-medium text-gray-700 mb-2">
+        <label
+          for="start-time"
+          class="text-sm font-semibold text-gray-700 mb-2"
+        >
+          Début:
+        </label>
+        <input
+          id="start-time"
+          v-model="startTime"
+          type="time"
+          class="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600"
+        />
+      </div>
+
+      <div class="flex flex-col">
+        <label
+          for="pause-time"
+          class="text-sm font-semibold text-gray-700 mb-2"
+        >
           Pause (minutes):
         </label>
-        <Input
+        <input
           id="pause-time"
           v-model="pauseTime"
           type="number"
           min="0"
-          class="h-10 w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+          class="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600"
         />
       </div>
 
       <div class="flex flex-col">
-        <label for="range-time" class="text-sm font-medium text-gray-700 mb-2">
+        <label
+          for="range-time"
+          class="text-sm font-semibold text-gray-700 mb-2"
+        >
           Range (minutes):
         </label>
-        <Input
+        <input
           id="range-time"
           v-model="rangeTime"
           type="number"
           min="1"
-          class="h-10 w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+          class="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600"
         />
       </div>
 
       <div class="flex flex-col">
-        <label for="end-time" class="text-sm font-medium text-gray-700 mb-2">
+        <label for="end-time" class="text-sm font-semibold text-gray-700 mb-2">
           Fin:
         </label>
-        <Input
+        <input
           id="end-time"
           v-model="endTime"
           type="time"
-          class="h-10 w-full rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+          class="block w-full rounded-md border border-gray-300 bg-white py-2 px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600"
         />
       </div>
-    </div>
 
-    <div
-      class="flex flex-col justify-start center overflow-y-auto space-y-4 p-4 bg-gray-100 rounded-lg shadow-md max-h-[40vh] w-[30vw] mx-auto my-4 py-5"
-    >
       <div
-        class="flex items-center justify-between bg-white rounded-md p-4 shadow-sm border border-gray-200 hover:shadow-lg transition-shadow"
-        v-for="timeslot in timeslotsSorted"
-        :key="timeslot.id"
+        class="flex flex-col justify-start overflow-y-auto space-y-4 p-4 bg-gray-50 rounded-lg shadow-lg max-h-[40vh]"
       >
-        <div class="flex items-center justify-center space-x-4 w-full">
-          <input
-            v-model="timeslot.value"
-            class="h-12 w-full max-w-[300px] rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-            type="time"
-            :disabled="!timeslot.editing"
-          />
+        <div
+          class="flex items-center justify-between bg-white rounded-md p-4 shadow-sm border border-gray-200 hover:shadow-lg transition-shadow"
+          v-for="timeslot in timeslotsSorted"
+          :key="timeslot.id"
+        >
+          <div class="flex items-center justify-center space-x-4 w-full">
+            <input
+              v-model="timeslot.value"
+              class="h-12 w-full max-w-[300px] rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+              type="time"
+              :disabled="!timeslot.editing"
+            />
 
-          <input
-            class="h-12 w-full max-w-[300px] rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-500"
-            type="time"
-            :value="timeslot.end"
-            :disabled="true"
-          />
+            <input
+              class="h-12 w-full max-w-[300px] rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-500"
+              type="time"
+              :value="timeslot.end"
+              :disabled="true"
+            />
+          </div>
         </div>
       </div>
-    </div>
 
-    <button
-      type="submit"
-      class="mx-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-    >
-      Créer
-    </button>
+      <button
+        type="submit"
+        class="w-full bg-blue-500 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md transition duration-300"
+      >
+        Créer
+      </button>
+    </div>
   </form>
 </template>

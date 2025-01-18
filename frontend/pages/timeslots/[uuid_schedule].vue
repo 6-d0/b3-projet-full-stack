@@ -5,41 +5,66 @@
       {{ teacher?.last_name }} {{ teacher?.first_name }}
     </h2>
 
-    <ul class="space-y-4">
-      <li
-        v-for="timeslot in timeslots"
-        :key="`${timeslot.uuid}`"
-        class="flex justify-between items-center p-4 bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300"
-      >
-        <span class="text-lg font-semibold text-gray-900">
-          {{ formatTime(timeslot.begin_time) }} -
-          {{ formatTime(timeslot.end_time) }}
-        </span>
-        <NuxtLink
-          :to="`/timeslots/register/${schedule_slug}/${timeslot.uuid}`"
-          v-if="canSubscribe"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+    <table class="min-w-[60vw] table-auto mx-auto">
+      <thead>
+        <tr class="bg-gray-100 text-gray-900">
+          <th class="px-6 py-3 text-center">Time Slot</th>
+          <th class="px-6 py-3 text-center" v-if="user?.role === 'student'">
+            Register
+          </th>
+          <th class="px-6 py-3 text-center" v-else>Details</th>
+          <th class="px-6 py-3 text-center" v-if="user?.role === 'teacher'">
+            Inscription
+          </th>
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        <tr
+          v-for="timeslot in timeslots"
+          :key="`${timeslot.uuid}`"
+          class="border-b border-gray-200"
         >
-          Register
-        </NuxtLink>
-        <NuxtLink
-          :to="`/timeslots/details/${timeslot.uuid}`"
-          v-if="user?.role === 'teacher'"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-        >
-          Details
-        </NuxtLink>
-      </li>
-    </ul>
+          <td class="px-6 py-4">
+            <span class="text-lg font-semibold text-gray-900">
+              {{ formatTime(timeslot.begin_time) }} -
+              {{ formatTime(timeslot.end_time) }}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <NuxtLink
+              :to="`/timeslots/register/${schedule_slug}/${timeslot.uuid}`"
+              v-if="canSubscribe"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+            >
+              Register
+            </NuxtLink>
+            <NuxtLink
+              :to="`/timeslots/${timeslot.uuid}/details`"
+              v-if="user?.role === 'teacher'"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+            >
+              Details
+            </NuxtLink>
+          </td>
+          <td>
+            <span v-if="isRegistration(timeslot.uuid)">
+              {{ isRegistration(timeslot.uuid).student.first_name }}
+              {{ isRegistration(timeslot.uuid).student.last_name }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
+import Navbar from "~/components/ui/navbar/Navbar.vue";
 
 const route = useRoute();
-var timeslots = ref<ITimeslots[] | null>(null);
+
 const schedule_slug = route.params.uuid_schedule.toString();
 var teacher = ref<IUser | null>(null);
 var canSubscribe = ref(false);
@@ -47,6 +72,10 @@ var canSubscribe = ref(false);
 // recup user
 import { userStore } from "~/stores/user";
 const user = userStore().user;
+
+//pour les timeslots et les registrations
+var timeslots = ref<ITimeslots[] | null>(null);
+var registrations = ref<any[]>([]);
 
 /**
  * récupère les timeslots d'un schedule, si c'est un professeur, recupère tout, sinon, seulement ceux disponibles
@@ -63,8 +92,6 @@ const fetchTimeSlots = async (s_slug: string) => {
         const startT = new Date(t.begin_time).getTime();
         return startS - startT;
       });
-      console.log(...timeslots.value);
-
       const teacher_from_schedule = timeslots.value[0]?.schedule.teacher;
       if (teacher_from_schedule) {
         teacher.value = teacher_from_schedule;
@@ -76,6 +103,13 @@ const fetchTimeSlots = async (s_slug: string) => {
         } else {
           canSubscribe.value = true;
         }
+      }
+
+      const { data: registrationsData } = await useAPI<any[]>(
+        `/registrations/${s_slug}/`
+      );
+      if (registrationsData?.value) {
+        registrations.value = registrationsData.value;
       }
     }
   } catch (error) {
@@ -89,13 +123,20 @@ const fetchTimeSlots = async (s_slug: string) => {
  */
 const formatTime = (dateString: string | Date) => {
   const date = new Date(dateString);
-  console.log(dateString);
-  console.log(date);
   const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
   return `${hours}:${minutes}`;
 };
 
+/**
+ * Get the registration for a specific slot
+ * @param slotUuid the uuid of the slot
+ */
+const isRegistration = (slotUuid: string | null) => {
+  return registrations.value.find(
+    (registration) => registration.slot.uuid === slotUuid
+  );
+};
 onMounted(() => {
   fetchTimeSlots(schedule_slug);
 });

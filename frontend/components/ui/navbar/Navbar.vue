@@ -13,9 +13,7 @@ export default defineComponent({
       return user?.role === "teacher";
     },
   },
-}
-);
-
+});
 </script>
 
 <template>
@@ -39,10 +37,10 @@ export default defineComponent({
             >
           </li>
           <li class="md:p-4 py-3 px-0 block">
-            <router-link to="/services">Services</router-link>
+            <router-link to="#">Services</router-link>
           </li>
           <li class="md:p-4 py-3 px-0 block">
-            <router-link to="/contact">Contact</router-link>
+            <router-link to="#">Contact</router-link>
           </li>
           <li class="md:p-4 py-3 px-0 block">
             <NuxtLink :to="`#`">Se déconnecter</NuxtLink>

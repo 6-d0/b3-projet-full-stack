@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from reviewcopies.models import Registration, Course, Timeslot
+from reviewcopies.models import Registration, Course, Timeslot, Schedule
 from reviewcopies.serializers.registrations import RegistrationSerializer, AddRegistrationSerializer
 from rest_framework.permissions import IsAuthenticated
 from reviewcopies.permissions import IsStudent, IsTeacher
@@ -65,3 +65,14 @@ class AddRegistrationView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class RegistrationByScheduleUUID(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        uuid = kwargs.pop("uuid")
+        try:
+            slot = Schedule.objects.get(uuid=uuid)
+            registration = Registration.objects.filter(slot__schedule=slot)
+            serializer = RegistrationSerializer(registration, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Timeslot.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)

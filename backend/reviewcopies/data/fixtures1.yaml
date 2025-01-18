@@ -190,6 +190,12 @@ Course:
       m2m:
           - branches: 1
           - sessions: 1
+    - name: "1INFO: Science Economique"
+      pk: 13
+      teacher_id: 7
+      m2m:
+          - branches: 1
+          - sessions: 1
 
 Schedule:
     - date: 2025-01-22

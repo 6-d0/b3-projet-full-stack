@@ -8,11 +8,11 @@
       <li
         v-for="branch in branches"
         :key="branch.slug"
-        class="p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 transition-all"
+        class="w-full bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 transition-all block"
       >
         <NuxtLink
           :href="`/sessions/${route.params.slug}/${branch.slug}/`"
-          class="text-lg font-medium text-gray-800 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400"
+          class="p-4 text-lg min-w-full font-medium text-gray-800 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-400 block"
         >
           {{ branch.name }}
         </NuxtLink>

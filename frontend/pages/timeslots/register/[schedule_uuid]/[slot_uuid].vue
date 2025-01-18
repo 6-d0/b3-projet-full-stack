@@ -51,7 +51,7 @@
       <div class="flex justify-center">
         <input
           type="submit"
-          value="Envoyer"
+          value="S'inscrire"
           class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full transition-all duration-300"
         />
       </div>
@@ -119,7 +119,7 @@ export default {
     };
 
     const saveRegistration = async () => {
-      if (!courseSelect.value || !comment.value) {
+      if (!courseSelect.value) {
         console.error("Veuillez remplir tous les champs");
         return;
       }
@@ -129,11 +129,9 @@ export default {
         timeslot: slot_uuid,
         comment: comment.value,
       };
-      console.log(data);
 
       try {
         const token = userStore().token;
-        console.log("Token utilisé :", token);
 
         const response = await useAPI("/registrations/add/", {
           method: "POST",
@@ -144,15 +142,18 @@ export default {
           },
           credentials: "include",
         });
-
-        if (response.error) {
-          console.error("Erreur de requête", response.error.value?.data);
-          alert(response.error.value?.message);
+        console.log(response.status.value);
+        if (response.status.value === "success") {
+          return navigateTo("/timeslots/my-timeslots/");
         } else {
-          console.log("Réponse du serveur :", response);
+          alert(
+            `Erreur: ${
+              response.error
+                ? response.error.value?.data.non_field_errors
+                : "Cause inconnue"
+            }`
+          );
         }
-
-        console.log("Enregistrement effectué avec succès");
       } catch (error) {
         console.error("Erreur lors de l'enregistrement", error);
       }
