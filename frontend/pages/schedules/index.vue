@@ -194,13 +194,14 @@ onMounted(() => {
     class="container bg-gray-50 max-w-[40vw] mx-auto p-6 rounded-lg shadow-md"
     @submit.prevent="save"
   >
-    <div class="space-y-6">
-      <div class="flex flex-col">
-        <label for="session" class="text-sm font-medium text-gray-700 mb-2">
-          Session:
-        </label>
-        <select name="session" id="session" v-model="selectedSession" required>
+    <div class="sm:col-span-3">
+    <label for="session" class="text-sm font-medium text-gray-700 mb-2">
+        Session:
+    </label>
+      <div class="mt-2 grid grid-cols-1">
+        <select name="session" id="session" autocomplete="session-name" v-model="selectedSession" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" required>
           <option
+            class="text-base"
             v-for="session in sessions"
             :value="session.pk"
             :key="session.pk"
@@ -209,13 +210,16 @@ onMounted(() => {
             {{ session.name }}
           </option>
         </select>
+        <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
+              <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+            </svg>
       </div>
 
       <div class="flex flex-col">
         <label for="session" class="text-sm font-medium text-gray-700 mb-2">
           Date:
         </label>
-        <input type="date" v-model="selectedDate" required />
+        <input type="date" v-model="selectedDate" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" required />
       </div>
 
       <div class="flex flex-col">
@@ -277,7 +281,7 @@ onMounted(() => {
     </div>
 
     <div
-      class="flex flex-col justify-center center overflow-y-auto space-y-4 p-4 bg-gray-100 rounded-lg shadow-md max-h-[60vh] w-[40vw] mx-auto my-4 py-5"
+      class="flex flex-col justify-start center overflow-y-auto space-y-4 p-4 bg-gray-100 rounded-lg shadow-md max-h-[40vh] w-[30vw] mx-auto my-4 py-5"
     >
       <div
         class="flex items-center justify-between bg-white rounded-md p-4 shadow-sm border border-gray-200 hover:shadow-lg transition-shadow"
@@ -293,7 +297,7 @@ onMounted(() => {
           />
 
           <input
-            class="h-12 w-full max-w-[300px] rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-500 cursor-not-allowed"
+            class="h-12 w-full max-w-[300px] rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-500"
             type="time"
             :value="timeslot.end"
             :disabled="true"

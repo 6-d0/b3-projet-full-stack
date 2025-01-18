@@ -13,12 +13,14 @@ export default defineComponent({
       return user?.role === "teacher";
     },
   },
-});
+}
+);
+
 </script>
 
 <template>
   <header
-    class="lg:px-16 px-4 bg-white flex flex-wrap items-center py-4 shadow-md"
+    class="lg:px-16 px-4 bg-white flex flex-wrap items-center py-4 shadow-md mb-4 static w-full"
   >
     <div class="flex-1 flex justify-between items-center">
       <a href="#" class="text-xl">reviewcopies</a>
