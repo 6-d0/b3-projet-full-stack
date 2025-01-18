@@ -1,4 +1,5 @@
 <template>
+  <Navbar />
   <div v-if="slot" class="p-6 max-w-lg mx-auto bg-white rounded-lg shadow-lg">
     <div class="text-center mb-4">
       <h2 class="text-2xl font-semibold text-gray-800">
@@ -176,7 +177,7 @@ export default {
       courseSelect,
       formatTime,
       saveRegistration,
-      definePageMeta
+      definePageMeta,
     };
   },
 };

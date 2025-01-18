@@ -61,6 +61,12 @@ class ScheduleByUUID(APIView):
         serializer = ScheduleListSerializer(schedule)
         return Response(serializer.data)
 
+class DeleteSchedule(APIView):
+    def get(self, request, *args, **kwargs):
+        schedule = get_object_or_404(models.Schedule, uuid=kwargs['uuid'])
+        schedule.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class TeacherSchedulesView(APIView):
     permission_classes = [IsAuthenticated]
 

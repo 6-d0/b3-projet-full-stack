@@ -7,7 +7,11 @@ urlpatterns = [
         views.ScheduleByUUID.as_view(),
         name="schedule-by-uuid"
     ),
-
+    path(
+        "delete/<uuid:uuid>/",
+        views.DeleteSchedule.as_view(),
+        name="delete-schedule"
+    ),
     path(
         "retrieve-schedule/<int:id>/",
         views.RetrieveScheduleView.as_view(),

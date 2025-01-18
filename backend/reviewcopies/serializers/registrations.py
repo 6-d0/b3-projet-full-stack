@@ -12,6 +12,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Registration
         fields = ['id', 'date', 'comment', 'course', 'student', 'slot']
+
 class AddRegistrationSerializer(serializers.ModelSerializer):
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
     slot = serializers.PrimaryKeyRelatedField(queryset=Timeslot.objects.all())
@@ -25,10 +26,15 @@ class AddRegistrationSerializer(serializers.ModelSerializer):
         student = attrs.get('student')
         course = attrs.get('course')
         slot = attrs.get('slot')
-
+        if isinstance(slot, int):
+            slot = Timeslot.objects.get(id=slot)
+        if isinstance(course, int):
+            course = Course.objects.get(id=course)
         if slot.schedule.session not in course.sessions.all():
             raise serializers.ValidationError("Le créneau horaire ne correspond pas à la session du cours.")
 
+        if Registration.objects.filter(course=course, student=student):
+            raise serializers.ValidationError("Vous êtes déjà inscrit à un créneau pour ce cours")
         if Registration.objects.filter(course=course, student=student, slot=slot).exists():
             raise serializers.ValidationError("Vous êtes déjà inscrit à ce créneau pour ce cours.")
 

@@ -20,12 +20,12 @@ class UserRegistrationsView(APIView):
     """
     get registration linked to a user
     """
-    permission_classes = [IsAuthenticated, IsStudent] 
+    permission_classes = [IsAuthenticated, IsStudent]
     def get(self, request):
         registrations = Registration.objects.filter(student=request.user)
         serializer = RegistrationSerializer(registrations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
 class AddRegistrationView(APIView):
     """
     View to create a new registration
@@ -60,7 +60,7 @@ class AddRegistrationView(APIView):
 
         serializer = AddRegistrationSerializer(data=registration_data, context={'request': request})
 
-        if serializer.is_valid():
+        if serializer.is_valid() and serializer.validate(registration_data):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

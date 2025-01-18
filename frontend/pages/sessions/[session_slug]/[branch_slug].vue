@@ -1,4 +1,5 @@
 <template>
+  <Navbar />
   <div class="container mx-auto p-6">
     <h2 class="text-2xl font-bold text-center">
       {{ session?.name }}
@@ -9,9 +10,7 @@
         :key="branch?.uuid"
         class="text-lg font-semibold text-gray-800 dark:text-gray-200"
       >
-        <h1
-          class="text-black-600"
-        >
+        <h1 class="text-black-600">
           {{ branch?.name }}
         </h1>
       </li>
@@ -37,10 +36,14 @@
         class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
       >
         <NuxtLink :href="`/timeslots/${schedule.uuid}/`">
-          <h5 class="mb-2 text-2xl font-semibold text-gray-900 dark:text-white">
-            {{ schedule.teacher.last_name.toUpperCase() }}
-            {{ schedule.teacher.first_name }}
-          </h5>
+          <div class="flex row justify-between">
+            <h5
+              class="mb-2 text-2xl font-semibold text-gray-900 dark:text-white"
+            >
+              {{ schedule.teacher.last_name.toUpperCase() }}
+              {{ schedule.teacher.first_name }}
+            </h5>
+          </div>
           <h6 class="mb-4 text-l font-small text-gray-800 dark:text-gray-300">
             {{ schedule.teacher.email }}
           </h6>
@@ -48,51 +51,54 @@
             {{ schedule.classroom }}
           </p>
           <div class="space-x-4">
-              <span
+            <span
               v-if="schedule.can_subscribe"
               class="text-center w-fit px-2 py-1 bg-green-600 text-white font-semibold rounded-lg shadow-md"
-              >
+            >
               Inscription active {{ schedule.can_subscribe_until }}
             </span>
             <span
-            v-else
-            class="text-center w-fit px-2 py-1 bg-red-600 text-white font-semibold rounded-lg shadow-md"
+              v-else
+              class="text-center w-fit px-2 py-1 bg-red-600 text-white font-semibold rounded-lg shadow-md"
             >
-            Inscription inactive
-          </span>
-            <NuxtLink
-              :to="`/schedules/${schedule.uuid}/`"
-              class="mx-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-              >Edit</NuxtLink
-            >
+              Inscription inactive
+            </span>
           </div>
         </NuxtLink>
+        <div
+          @click="() => deleteSchedule(schedule.uuid)"
+          class="cursor-pointer"
+        >
+          x
+        </div>
       </li>
       <li
         v-if="user?.role === 'teacher'"
         class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
       >
-  <NuxtLink :href="`/schedules/`">
-    <div class="flex flex-col items-center justify-center h-full">
-      <div class="flex items-center justify-center p-0 rounded-full">
-        <h5 class="text-3xl font-semibold">+</h5>
-      </div>
-      <p class="text-lg font-medium text-gray-900 dark:text-white text-center">
-        Ajouter un créneau
-      </p>
-    </div>
-  </NuxtLink>
-</li>
+        <NuxtLink :href="`/schedules/`">
+          <div class="flex flex-col items-center justify-center h-full">
+            <div class="flex items-center justify-center p-0 rounded-full">
+              <h5 class="text-3xl font-semibold">+</h5>
+            </div>
+            <p
+              class="text-lg font-medium text-gray-900 dark:text-white text-center"
+            >
+              Ajouter un créneau
+            </p>
+          </div>
+        </NuxtLink>
+      </li>
 
       <!-- afficher les schedules avec des timeslots pour les etudiants -->
       <li
-        v-for="schedule in schedules.filter((s) => hasTimeSlot(s.uuid))"
+        v-for="schedule in schedules.filter(
+          (s) => hasTimeSlot(s.uuid) && s.can_subscribe
+        )"
         v-else
         class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
       >
-        <NuxtLink
-          :href="`/timeslots/${schedule.uuid}/`"
-        >
+        <NuxtLink :href="`/timeslots/${schedule.uuid}/`">
           <h5 class="mb-2 text-2xl font-semibold text-gray-900 dark:text-white">
             {{ schedule.teacher.last_name.toUpperCase() }}
             {{ schedule.teacher.first_name }}
@@ -141,13 +147,14 @@ const loading = ref<boolean>(true);
 
 // recuperer user
 import { userStore } from "~/stores/user";
+import Navbar from "~/components/ui/navbar/Navbar.vue";
 const user = userStore().user;
 
 /**
  * Retrouve une branche selon son slug
  * @param slug le slug de la branche
  */
-const fetchBranches = async (slug: string) => {
+async function fetchBranches(slug: string) {
   try {
     const { data: abranches } = await useAPI<IBranch[]>(
       `/branches/${route.params.session_slug}`
@@ -156,27 +163,27 @@ const fetchBranches = async (slug: string) => {
   } catch (error) {
     console.error(error);
   }
-};
+}
 
 /**
  * Retrouve une session a partir d'un slug
  * @param slug le slug de la session
  */
-const fetchSession = async (slug: string) => {
+async function fetchSession(slug: string) {
   try {
     const { data: asession } = await useAPI<ISession[]>(`/sessions/`);
     session.value = asession.value?.find((s) => s.slug === slug) || null;
   } catch (error) {
     console.error(error);
   }
-};
+}
 
 /**
  * Retrouve les schedules liés à une branche
  * @param branch_slug le slug d'une branche
  * @param session_slug le slug d'une session
  */
-const fetchSchedules = async (branch_slug: string, session_slug: string) => {
+async function fetchSchedules(branch_slug: string, session_slug: string) {
   try {
     const response = await fetch(
       `http://localhost:9000/api/v1/schedules/${session_slug}/${branch_slug}`
@@ -200,13 +207,26 @@ const fetchSchedules = async (branch_slug: string, session_slug: string) => {
   } finally {
     loading.value = false;
   }
-};
+}
 
 function hasTimeSlot(uuid: string): boolean {
   return (
     scheduleTimeslots.value[uuid] && scheduleTimeslots.value[uuid].length > 0
   );
 }
+
+const deleteSchedule = async (uuid: string) => {
+  const token = userStore().token;
+  const response = await useAPI(`/schedules/delete/${uuid}/`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": `${token}`,
+    },
+    credentials: "include",
+  });
+  schedules.value = schedules.value.filter((s) => s.uuid !== uuid);
+};
 
 onMounted(() => {
   fetchSession(session_slug);

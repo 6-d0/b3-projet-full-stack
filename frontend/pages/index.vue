@@ -1,4 +1,5 @@
 <template>
+  <Navbar />
   <div class="container mx-auto p-6">
     <h2 class="text-3xl font-semibold text-gray-800 mb-6">Sessions</h2>
 
@@ -20,5 +21,7 @@
 </template>
 
 <script setup lang="ts">
+import Navbar from "~/components/ui/navbar/Navbar.vue";
+
 const { data: asessions } = await useAPI<ISessions>("/sessions/");
 </script>
