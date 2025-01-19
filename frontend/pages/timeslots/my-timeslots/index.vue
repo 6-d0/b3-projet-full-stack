@@ -32,7 +32,7 @@
               <span class="font-medium">
                 {{ formatTime(registration.slot.begin_time) }} -
                 {{ formatTime(registration.slot.end_time) }}
-                ({{ new Date(registration.date).toLocaleDateString() }})
+                ({{ new Date(registration.slot.schedule.date).toLocaleDateString() }})
               </span>
             </div>
           </div>
