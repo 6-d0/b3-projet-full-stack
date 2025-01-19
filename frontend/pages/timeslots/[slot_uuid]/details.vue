@@ -5,9 +5,11 @@
       v-if="registration"
       class="p-6 bg-white rounded-lg shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700"
     >
-      <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-        Détails de l'inscription
-      </h2>
+      <div class="mb-5">
+        <span class="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+          Détails de l'inscription
+        </span>
+      </div>
 
       <div class="mb-4">
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">
@@ -20,10 +22,35 @@
 
       <div class="mb-4">
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">
+          Étudiant :
+        </h3>
+        <p class="text-gray-600 dark:text-gray-400">
+          {{ registration.student.last_name.toUpperCase() }}
+          {{ registration.student.first_name }}
+          (<a
+            :href="`mailto:${registration.student.email}`"
+            class="text-blue-500 hover:underline"
+          >
+            {{ registration.student.email }} </a
+          >)
+        </p>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">
           Date de la prise de rendez-vous :
         </h3>
         <p class="text-gray-600 dark:text-gray-400">
           {{ new Date(registration.date).toLocaleDateString() }}
+        </p>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">
+          Date du rendez-vous :
+        </h3>
+        <p class="text-gray-600 dark:text-gray-400">
+          {{ new Date(registration.slot.schedule.date).toLocaleDateString() }}
         </p>
       </div>
 
@@ -46,37 +73,12 @@
         </p>
       </div>
 
-      <div class="mb-4">
-        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">
-          Étudiant :
-        </h3>
-        <p class="text-gray-600 dark:text-gray-400">
-          {{ registration.student.last_name.toUpperCase() }}
-          {{ registration.student.first_name }}
-          (<a
-            :href="`mailto:${registration.student.email}`"
-            class="text-blue-500 hover:underline"
-          >
-            {{ registration.student.email }} </a
-          >)
-        </p>
-      </div>
-
-      <div class="mb-4">
+      <div class="mb-4" v-if="registration.comment">
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">
           Commentaire :
         </h3>
         <p class="text-gray-600 dark:text-gray-400">
           {{ registration.comment }}
-        </p>
-      </div>
-
-      <div class="mb-4">
-        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">
-          Date du rendez-vous :
-        </h3>
-        <p class="text-gray-600 dark:text-gray-400">
-          {{ new Date(registration.slot.schedule.date).toLocaleDateString() }}
         </p>
       </div>
     </div>
@@ -107,7 +109,7 @@ export default {
     }
 
     const fetchRegistration = async (uuid: string) => {
-      const { data: r } = useAPI<IRegistration>(
+      const { data: r } = await useAPI<IRegistration>(
         `/registrations/${uuid}/details/`
       );
       registration.value = r.value;

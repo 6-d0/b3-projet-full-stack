@@ -4,13 +4,14 @@ from rest_framework import status
 from reviewcopies.models import Registration, Course, Timeslot, Schedule
 from reviewcopies.serializers.registrations import RegistrationSerializer, AddRegistrationSerializer
 from rest_framework.permissions import IsAuthenticated
-from reviewcopies.permissions import IsStudent, IsTeacher
+from reviewcopies.permissions import IsStudent, IsTeacher, IsAdmin
 
 
 class AllRegistrationsView(APIView):
     """
     Get all registrations
     """
+    permission_classes = [IsAuthenticated, IsTeacher]
     def get(self, request):
         registrations = Registration.objects.all()
         serializer = RegistrationSerializer(registrations, many=True)
@@ -30,7 +31,7 @@ class AddRegistrationView(APIView):
     """
     View to create a new registration
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsStudent]
     def post(self, request):
         """
         Create the registration with post method
@@ -67,7 +68,7 @@ class AddRegistrationView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class RegistrationByTimeSlot(APIView):
-    permission_classes = [IsTeacher, IsAuthenticated]
+    permission_classes = [IsTeacher, IsAuthenticated, IsAdmin]
     def get(self, request, *args, **kwargs):
         uuid = kwargs.pop("uuid")
         try:

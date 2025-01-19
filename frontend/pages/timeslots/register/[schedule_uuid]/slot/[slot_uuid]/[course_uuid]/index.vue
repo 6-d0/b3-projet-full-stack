@@ -28,26 +28,6 @@
         />
       </div>
 
-      <div class="flex flex-col">
-        <label for="courses" class="text-gray-700 font-medium mb-2"
-          >Choisir un cours</label
-        >
-        <select
-          v-model="courseSelect"
-          name="courses"
-          id="courses"
-          class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option
-            v-for="course in courses"
-            :value="course.slug"
-            :key="course.slug"
-          >
-            {{ course.name }}
-          </option>
-        </select>
-      </div>
-
       <div class="flex justify-center">
         <input
           type="submit"
@@ -92,7 +72,7 @@ export default {
 
     const slot = ref<ITimeslots | null>(null);
     const schedule = ref<ISchedules | null>(null);
-    const courses = ref<ICourses[] | null>(null);
+    const courses = ref<ICourses | null>(null);
     const comment = ref("");
     const courseSelect = ref<ICourses | null>(null);
 
@@ -116,7 +96,7 @@ export default {
 
     const fetchSchedules = async (uuid: string) => {
       const { data: aschedule } = await useAPI<ISchedules | null>(
-        `/schedules/${schedule_uuid}`
+        `/schedules/${schedule_uuid}/`
       );
       schedule.value = aschedule.value;
     };
@@ -128,23 +108,20 @@ export default {
       return `${lzero(hours)}:${lzero(minutes)}`;
     }
 
-    const fetchCourses = async (uuid: string) => {
+    const fetchCourse = async (uuid: string, course_uuid: string) => {
       const { data: acourses } = await useAPI<ICourses[] | null>(
-        `/courses/${uuid}/courses`
+        `/courses/${uuid}/courses/`
       );
-      courses.value = acourses.value;
+      if (acourses.value)
+        courses.value = acourses.value
+          .filter((s) => s.uuid === course_uuid)
+          .at(0) as ICourses;
+      console.log(courses.value);
     };
 
     const saveRegistration = async () => {
-      if (!courseSelect.value) {
-        modalTitle.value = "Erreur";
-        modalMessage.value = "Veuillez remplir tous les champs";
-        showModal.value = true;
-        return;
-      }
-
       const data = {
-        course: courseSelect.value,
+        course: `${courses.value?.slug}`,
         timeslot: slot_uuid,
         comment: comment.value,
       };
@@ -182,7 +159,8 @@ export default {
       await fetchSchedules(schedule_uuid);
       if (schedule.value) {
         const teacher_uuid = schedule.value.teacher.uuid;
-        await fetchCourses(teacher_uuid);
+        const course_uuid = useRoute().params.course_uuid as string;
+        await fetchCourse(teacher_uuid, course_uuid);
       } else {
       }
     });

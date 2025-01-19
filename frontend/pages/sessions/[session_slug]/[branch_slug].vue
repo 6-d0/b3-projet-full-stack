@@ -72,20 +72,13 @@
   <!-- page -->
   <Navbar />
   <div class="container mx-auto p-6">
-    <h2 class="text-2xl font-bold text-center">
-      {{ session?.name }}
+    <h2 class="text-2xl font-semibold text-center">
+      {{ session?.name }} - {{ branch?.name }}
     </h2>
 
-    <ul class="mb-6">
-      <li
-        :key="branch?.uuid"
-        class="text-lg font-semibold text-gray-800 dark:text-gray-200"
-      >
-        <h1 class="text-black-600">
-          {{ branch?.name }}
-        </h1>
-      </li>
-    </ul>
+    <div class="mb-6 text-lg font-semibold text-gray-800 dark:text-gray-200">
+      Vue par professeur
+    </div>
 
     <div
       v-if="loading"
@@ -102,7 +95,7 @@
         v-for="schedule in schedules.filter(
           (s) => s.teacher.username === user?.username
         )"
-        v-if="user?.role === 'teacher'"
+        v-if="userStore().isTeacher()"
         :key="schedule.uuid"
         class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
       >
@@ -123,6 +116,13 @@
               class="text-sm font-normal text-gray-700 dark:text-gray-400 my-3"
             >
               {{ schedule.classroom }}
+            </p>
+          </div>
+          <div class="h-6 mb-2">
+            <p
+              class="text-sm font-normal text-gray-700 dark:text-gray-400 my-3"
+            >
+              {{ new Date(schedule.date).toLocaleDateString() }}
             </p>
           </div>
         </NuxtLink>
@@ -175,7 +175,7 @@
         </div>
       </li>
       <li
-        v-if="user?.role === 'teacher'"
+        v-if="userStore().isTeacher()"
         class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
       >
         <NuxtLink :href="`/schedules/`">
@@ -192,15 +192,12 @@
         </NuxtLink>
       </li>
 
-      <!-- schedule avec timeslots uniquement -->
+      <!-- schedule avec timeslots uniquement (finalement non tous les schedules)-->
       <li
         v-for="schedule in schedules.filter(
-          (s) =>
-            hasTimeSlot(s.uuid) &&
-            s.can_subscribe &&
-            new Date(s.date) > new Date()
+          (s) => s.can_subscribe && new Date(s.date) > new Date()
         )"
-        v-else
+        v-if="userStore().isStudent() || userStore().isAdmin()"
         class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
       >
         <NuxtLink :to="`/timeslots/${schedule.uuid}/`">
@@ -214,6 +211,13 @@
           <div class="h-6 mb-2">
             <p class="text-sm font-normal text-gray-700 dark:text-gray-400">
               {{ schedule.classroom }}
+            </p>
+          </div>
+          <div class="h-6 mb-2">
+            <p
+              class="text-sm font-normal text-gray-700 dark:text-gray-400 my-3"
+            >
+              {{ new Date(schedule.date).toLocaleDateString() }}
             </p>
           </div>
           <div>
@@ -233,18 +237,102 @@
         </NuxtLink>
       </li>
     </ul>
+
+    <div class="" v-if="userStore().isStudent()">
+      <div
+        :key="branch?.uuid"
+        class="mt-10 mb-6 text-lg font-semibold text-gray-800 dark:text-gray-200"
+      >
+        <h1 class="text-black-600">Vue par cours</h1>
+      </div>
+      <div class="w-full mb-6 py-2" v-for="scheduleCourse in courses">
+        <div class="flex items-center">
+          <span class="text-s my-2 font-semibold">
+            {{
+              scheduleCourse.schedule
+                ? new Date(
+                    scheduleCourse.schedule?.date.toString()
+                  ).toLocaleDateString()
+                : ""
+            }}
+            -
+            {{ scheduleCourse.schedule?.teacher.last_name }}
+            {{ scheduleCourse.schedule?.teacher.first_name }}
+          </span>
+        </div>
+        <ul
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+        >
+          <li
+            class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+            v-for="course in scheduleCourse.course"
+          >
+            <NuxtLink
+              :to="`/timeslots/${scheduleCourse.schedule?.uuid}/${course.uuid}/`"
+            >
+              <h5
+                class="mb-2 h-[30%] text-xl font-semibold text-gray-900 dark:text-white flex items-center"
+              >
+                <span class="my-auto">
+                  {{ course.name }}
+                </span>
+              </h5>
+              <h6
+                class="mb-2 text-l font-small text-gray-800 dark:text-gray-300"
+              >
+                {{ scheduleCourse.schedule?.teacher.last_name }}
+                {{ scheduleCourse.schedule?.teacher.first_name }}
+              </h6>
+              <div class="h-6 mb-2">
+                <p class="text-sm font-normal text-gray-700 dark:text-gray-400">
+                  {{ scheduleCourse.schedule?.classroom }}
+                </p>
+              </div>
+              <div class="h-6 mb-2">
+                <p
+                  class="text-sm font-normal text-gray-700 dark:text-gray-400 my-3"
+                >
+                  {{
+                    scheduleCourse.schedule
+                      ? new Date(
+                          scheduleCourse.schedule.date
+                        ).toLocaleDateString()
+                      : ""
+                  }}
+                </p>
+              </div>
+              <div>
+                <span
+                  v-if="scheduleCourse.schedule?.can_subscribe"
+                  class="text-center w-fit px-2 py-1 bg-green-600 text-white font-semibold rounded-lg shadow-md"
+                >
+                  Inscription active
+                  {{ scheduleCourse.schedule?.can_subscribe_until }}
+                </span>
+                <span
+                  v-else
+                  class="text-center w-fit px-2 py-1 bg-red-600 text-white font-semibold rounded-lg shadow-md"
+                >
+                  Inscription inactive
+                </span>
+              </div>
+            </NuxtLink>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 
 // par rapport au nom des fichiers
 const route = useRoute();
 const session_slug = route.params.session_slug as string;
 const branch_slug = route.params.branch_slug as string;
-const scheduleTimeslots = ref<{ [uuid: string]: ITimeslots[] }>({});
+const scheduleTimeslots = ref<ITimeslots[]>([]);
 
 // pour utiliser dans la page
 const session = ref<ISession | null>(null);
@@ -254,6 +342,7 @@ const loading = ref<boolean>(true);
 const token = userStore().token;
 const isModalOpen = ref(false);
 const selectedScheduleUuid = ref<string>();
+
 // recuperer user
 import { userStore } from "~/stores/user";
 import Navbar from "~/components/ui/navbar/Navbar.vue";
@@ -273,6 +362,35 @@ async function fetchBranches(slug: string) {
     console.error(error);
   }
 }
+class CourseSchedule {
+  schedule: ISchedules | null;
+  course: ICourses[];
+
+  constructor(schedule: ISchedules | null, course: ICourses[]) {
+    this.schedule = schedule;
+    this.course = course;
+  }
+}
+
+const courses = ref<CourseSchedule[]>([]);
+
+const fetchCourses = async (uuid: string, schedule: ISchedules) => {
+  try {
+    if (schedule.can_subscribe) {
+      const { data: acourses } = await useAPI<ICourses[] | null>(
+        `/courses/${uuid}/${branch_slug}`
+      );
+      if (Array.isArray(acourses.value) && acourses.value.length > 0) {
+        courses.value.push(new CourseSchedule(schedule, acourses.value));
+      }
+    }
+  } catch (error) {
+    console.error(
+      `Erreur lors de la récupération des cours pour le schedule ${uuid}:`,
+      error
+    );
+  }
+};
 
 /**
  * Retrouve une session a partir d'un slug
@@ -303,13 +421,23 @@ const fetchSchedules = async (branchSlug: string, sessionSlug: string) => {
     const data = await response.json();
     schedules.value = data;
 
+    // les profs ont pas besoin de voir leurs schedules par cours
+    if (user?.role === "student") {
+      await Promise.all(
+        schedules.value.map(async (s) => {
+          if (s) {
+            await fetchCourses(s.teacher.uuid, s);
+          }
+        })
+      );
+    }
+
     const timeslotPromises = data.map(async (schedule: ISchedules) => {
-      const responseTimeslot = await fetch(
+      const { data: itimeslot } = await useAPI<ITimeslots>(
         `/api/v1/timeslots/${schedule.uuid}/available/`
       );
-      if (responseTimeslot.ok) {
-        const timeslotData = await responseTimeslot.json();
-        scheduleTimeslots.value[schedule.uuid] = timeslotData;
+      if (itimeslot.value) {
+        scheduleTimeslots.value.push(itimeslot.value);
       }
     });
 
@@ -321,14 +449,12 @@ const fetchSchedules = async (branchSlug: string, sessionSlug: string) => {
   }
 };
 
-/**
+/** ouais mais ca marche plus
  * Vérifie si le schedule a des timeslots
  * @param uuid l'uuid du schedule
  */
 function hasTimeSlot(uuid: string): boolean {
-  return (
-    scheduleTimeslots.value[uuid] && scheduleTimeslots.value[uuid].length > 0
-  );
+  return scheduleTimeslots.value.length > 0;
 }
 
 /**

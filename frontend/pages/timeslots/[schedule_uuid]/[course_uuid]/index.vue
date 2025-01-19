@@ -9,21 +9,7 @@
       <thead>
         <tr class="bg-gray-100 text-gray-900">
           <th class="px-6 py-3 text-center">Time Slot</th>
-          <th class="px-6 py-3 text-center" v-if="userStore().isStudent()">
-            Register
-          </th>
-          <th
-            class="px-6 py-3 text-center"
-            v-if="userStore().isTeacher() || userStore().isAdmin()"
-          >
-            Details
-          </th>
-          <th
-            class="px-6 py-3 text-center"
-            v-if="userStore().isTeacher() || userStore().isAdmin()"
-          >
-            Inscription
-          </th>
+          <th class="px-6 py-3 text-center">Register</th>
         </tr>
       </thead>
       <tbody class="text-center">
@@ -40,32 +26,12 @@
           </td>
           <td class="px-6 py-4">
             <NuxtLink
-              :to="`/timeslots/register/${schedule_slug}/${timeslot.uuid}`"
+              :to="`/timeslots/register/${schedule_slug}/slot/${timeslot.uuid}/${course_uuid}/`"
               v-if="canSubscribe && userStore().isStudent()"
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
             >
               Register
             </NuxtLink>
-            <NuxtLink
-              v-if="
-                (userStore().isTeacher() || userStore().isAdmin()) &&
-                isRegistration(timeslot.uuid)
-              "
-              :to="`/timeslots/${timeslot.uuid}/details`"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-            >
-              Details
-            </NuxtLink>
-            <button
-              disabled
-              v-if="
-                (userStore().isTeacher() || userStore().isAdmin()) &&
-                !isRegistration(timeslot.uuid)
-              "
-              class="cursor-default disabled bg-gray-500 text-white font-bold py-2 px-4 rounded-full"
-            >
-              Details
-            </button>
           </td>
           <td>
             <span v-if="isRegistration(timeslot.uuid)">
@@ -86,7 +52,8 @@ import Navbar from "~/components/ui/navbar/Navbar.vue";
 
 const route = useRoute();
 
-const schedule_slug = route.params.uuid_schedule.toString();
+const schedule_slug = route.params.schedule_uuid.toString();
+const course_uuid = route.params.course_uuid.toString();
 var teacher = ref<IUser | null>(null);
 var canSubscribe = ref(false);
 

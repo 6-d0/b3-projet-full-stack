@@ -1,7 +1,7 @@
 <script lang="ts">
 import { NuxtLink } from "#build/components";
 import { defineComponent } from "vue";
-import { userStore } from "@/stores/user"; // Importez le store utilisateur
+import { userStore } from "@/stores/user";
 
 export default defineComponent({
   name: "Navbar",
@@ -15,17 +15,21 @@ export default defineComponent({
     isTeacher() {
       return this.user?.role === "teacher";
     },
+    isAdmin() {
+      return this.user?.role === "admin";
+    },
   },
   methods: {
     async logout() {
       try {
         const response = await fetch(`/api/v1/auth/logout/`, {
-            body: null,
+          body: null,
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include",});
+          credentials: "include",
+        });
         userStore().$reset();
       } catch (error) {
         console.error("Erreur lors de la déconnexion:", error);
@@ -44,35 +48,75 @@ export default defineComponent({
     </div>
     <div class="hidden md:flex md:items-center md:w-auto w-full" id="menu">
       <nav>
-        <ul class="md:flex items-center justify-between text-base text-gray-700 pt-4 md:pt-0">
-          <li class="md:p-4 py-3 px-0 block">
-            <router-link to="/">Accueil</router-link>
+        <ul
+          class="md:flex items-center justify-between text-base text-gray-700 pt-4 md:pt-0"
+        >
+          <NuxtLink to="/">
+            <li class="md:p-4 py-3 px-0 block hover:bg-gray-50">Accueil</li>
+          </NuxtLink>
+          <li v-if="isStudent" class="md:p-4 py-3 px-0 block hover:bg-gray-50">
+            <NuxtLink to="/timeslots/my-timeslots"> Mes inscriptions </NuxtLink>
           </li>
-          <li v-if="isStudent" class="md:p-4 py-3 px-0 block">
-            <router-link to="/timeslots/my-timeslots">Mes inscriptions</router-link>
+          <NuxtLink to="/schedules/">
+            <li
+              class="md:p-4 py-3 px-0 block hover:bg-gray-50"
+              v-if="user?.role === 'teacher'"
+            >
+              Créer un planning
+            </li>
+          </NuxtLink>
+          <NuxtLink to="/schedules/my-schedules">
+            <li
+              class="md:p-4 py-3 px-0 block hover:bg-gray-50"
+              v-if="isTeacher"
+            >
+              Mes plannings
+            </li>
+          </NuxtLink>
+
+          <li
+            class="md:p-6 py-4 cursor-pointer px-0 block relative group hover:bg-gray-50"
+            v-if="isTeacher"
+          >
+            <span class="">Cours</span>
+            <ul
+              class="absolute hidden group-hover:block bg-white shadow-lg rounded-lg mt-4 w-56 text-base -left-4"
+            >
+              <NuxtLink to="/courses/create/">
+                <li class="px-6 py-3 hover:bg-gray-50 text-lg">
+                  Créer un cours
+                </li>
+              </NuxtLink>
+              <NuxtLink to="/courses/details/">
+                <li class="px-6 py-3 hover:bg-gray-50 text-lg">Mes cours</li>
+              </NuxtLink>
+            </ul>
           </li>
-          <li class="md:p-4 py-3 px-0 block" v-if="user?.role === 'teacher'">
-            <router-link to="/schedules/">Créer un planning</router-link>
+          <li class="md:p-4 py-3 px-0 block" v-if="isAdmin">
+            <NuxtLink to="/sessions/create/"> Créer une session </NuxtLink>
           </li>
-          <li class="md:p-4 py-3 px-0 block" v-if="isTeacher">
-            <router-link to="/schedules/my-schedules">Mes plannings</router-link>
-          </li>
-          <li class="md:p-6 py-4 px-0 block relative group">
-            <span class="cursor-pointer hover:text-gray-500 text-lg font-semibold">
+          <li
+            class="md:p-6 py-4 px-0 block relative group cursor-pointer hover:bg-gray-50"
+          >
+            <span
+              class="cursor-pointer hover:text-gray-500 text-lg font-semibold"
+              v-if="user?.last_name && user.first_name"
+            >
               {{ user?.last_name.toUpperCase() }} {{ user?.first_name }}
             </span>
-            <ul class="absolute hidden group-hover:block bg-white shadow-lg rounded-lg mt-4 w-56 text-base -left-4">
+            <span
+              v-else
+              class="cursor-pointer hover:text-gray-500 text-lg font-semibold"
+            >
+              Administrateur
+            </span>
+            <ul
+              class="absolute hidden group-hover:block bg-white shadow-lg rounded-lg mt-4 w-56 text-base -left-4"
+            >
               <NuxtLink class="py-3 w-[100%]" :to="`/user/details`">
-                <li class="px-6 py-3 hover:bg-gray-100 text-lg">
-                  Mon profil
-                </li>
+                <li class="px-6 py-3 hover:bg-gray-50 text-lg">Mon profil</li>
               </NuxtLink>
-              <NuxtLink :to="`/settings`">
-                <li class="px-6 py-3 hover:bg-gray-100 text-lg">
-                  Paramètres
-                </li>
-              </NuxtLink>
-              <li class="px-6 py-3 hover:bg-gray-100 text-lg" @click="logout">
+              <li class="px-6 py-3 hover:bg-gray-50 text-lg" @click="logout">
                 Se déconnecter
               </li>
             </ul>

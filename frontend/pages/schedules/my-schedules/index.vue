@@ -71,12 +71,13 @@
 
   <!-- page -->
   <Navbar />
-  <div class="p-6 w-[75vw] mx-auto">
-    <ul
-      v-for="(session, index) in sessions"
-      :key="index"
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
-    >
+  <div
+    class="p-6 w-[75vw] mx-auto"
+    v-for="(session, index) in sessions"
+    :key="index"
+  >
+    <h1 class="text-pretty text-base font-semibold">{{ session.name }}</h1>
+    <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       <li
         v-if="schedules"
         v-for="schedule in sortedSchedules(session)"

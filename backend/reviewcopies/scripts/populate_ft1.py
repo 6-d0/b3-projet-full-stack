@@ -40,6 +40,7 @@ for user in user_data:
         if created:
             user_instance.set_password(password)
             user_instance.role = 'student' if user_instance.username.startswith('e') else 'teacher'
+            user_instance.role = 'admin' if user_instance.is_superuser else user_instance.role
             user_instance.full_clean()
             user_instance.save()
             print(f"Utilisateur '{user_instance.username}' créé avec succès.")
@@ -58,7 +59,7 @@ with transaction.atomic():
         except AttributeError:
             print(f"Modèle '{model_name}' introuvable dans les modèles Django.")
             continue
-        
+
         for entry in entries:
             try:
                 m2m = entry.pop("m2m", [])
@@ -69,7 +70,7 @@ with transaction.atomic():
                     print(f"{model_name} instance créée : {entry}")
                 else:
                     print(f"{model_name} instance existe déjà : {entry}")
-                
+
                 for d in m2m:
                     name, pk = next(iter(d.items()))
                     related_manager = attr(obj, name, "add")

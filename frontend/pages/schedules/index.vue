@@ -128,7 +128,6 @@ const saveSchedule = async (): Promise<number | undefined> => {
       ? `${can_subscribe_until.value}`
       : null,
   };
-  console.log(data);
 
   const response = await useAPI<ISchedules>("/schedules/create-schedule/", {
     method: "POST",

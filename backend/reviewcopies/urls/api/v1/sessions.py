@@ -3,8 +3,18 @@ from django.urls import path
 
 urlpatterns = [
     path(
+        "<slug:slug>/delete/",
+        views.DeleteSession.as_view(),
+        name="session-list",
+    ),
+    path(
         "",
         views.session_list_view,
         name="session-list",
+    ),
+    path(
+        "create/",
+        views.CreateSession.as_view(),
+        name="create-session",
     ),
 ]

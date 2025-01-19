@@ -1,16 +1,15 @@
-from rest_framework.views import APIView
-from django.db.models import Exists, OuterRef
-from rest_framework.response import Response
-from rest_framework import status
-from django.db.models import Q
-from rest_framework.permissions import IsAuthenticated
+from datetime import timedelta
+
+from django.db.models import Exists, OuterRef, Q
 from django.shortcuts import get_object_or_404
-from reviewcopies.models import Timeslot, Schedule, Registration
-from reviewcopies.serializers.timeslots import TimeslotSerializer
-from datetime import datetime, timedelta
 from django.utils.dateparse import parse_datetime
 
-from reviewcopies.models import Timeslot, Schedule
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+
+from reviewcopies.models import Timeslot, Schedule, Registration
 from reviewcopies.serializers.timeslots import TimeslotSerializer
 
 

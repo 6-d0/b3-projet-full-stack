@@ -18,7 +18,7 @@ class LoginView(KnoxLoginView):
         elif 'h' in str(user.username):
             user.role = 'teacher'
         else:
-            user.role = "teacher"
+            user.role = "admin"
         user.save(update_fields=['role'])
         login(request, user)
         return super(LoginView, self).post(request, format=None)

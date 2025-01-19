@@ -2,8 +2,17 @@ import { defineStore } from "pinia";
 
 export const userStore = defineStore("user", {
   state: () => ({
-    user: null as IUser | null, // Utilisateur actuel (ou null si non connecté)
+    user: null as IUser | null,
     token: null as string | null,
+    isStudent() {
+      return this.user?.role === "student";
+    },
+    isTeacher() {
+      return this.user?.role === "teacher";
+    },
+    isAdmin() {
+      return this.user?.role === "admin";
+    },
   }),
   actions: {
     async fetchUser() {

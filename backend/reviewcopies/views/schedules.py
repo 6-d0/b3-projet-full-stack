@@ -1,24 +1,21 @@
 from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.generics import ListAPIView
-from reviewcopies import models
-from reviewcopies.serializers.schedules import ScheduleListSerializer, ScheduleCreateSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from reviewcopies.models import Schedule
+
+from reviewcopies.serializers.schedules import ScheduleListSerializer, ScheduleCreateSerializer
+from reviewcopies.models import Schedule, Course, Branch, Session, User
+from reviewcopies.permissions import IsStudent, IsTeacher
+
 
 import logging
 
 
 class ScheduleListView(ListAPIView):
     """
-    LIST ALL SESSIONS_SCHEDULES
-    ============================
-    ! accents
-    so:
-         http://localhost:8000/api/v1/schedules/session-de-janvier-2025/bachelier-en-informatique-orientation-daveloppement-dapplications/
-
+    list all schedule of a specific session + branches
     """
     serializer_class = ScheduleListSerializer
 
@@ -26,17 +23,17 @@ class ScheduleListView(ListAPIView):
         match key:
             case "session":
                 print(f"Session found: {self.kwargs["session"]}")
-                return get_object_or_404(models.Session, slug=self.kwargs["session"])
+                return get_object_or_404(Session, slug=self.kwargs["session"])
             case "branch":
                 print(f"Session found: {self.kwargs["branch"]}")
-                return get_object_or_404(models.Branch, slug=self.kwargs["branch"])
+                return get_object_or_404(Branch, slug=self.kwargs["branch"])
 
     def get_queryset(self):
         session = self.get_object("session")
         branch = self.get_object("branch")
-        schedules = models.Schedule.objects.filter(session=session)
+        schedules = Schedule.objects.filter(session=session)
 
-        teacher_courses = models.Course.objects.filter(
+        teacher_courses = Course.objects.filter(
             sessions=session,
             branches=branch
         )
@@ -55,26 +52,34 @@ schedule_list_view = ScheduleListView.as_view()
 logger = logging.getLogger(__name__)
 
 class ScheduleByUUID(APIView):
+    """
+    return as schedule with uuid
+    """
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
-        schedule = get_object_or_404(models.Schedule, uuid=kwargs['uuid'])
+        schedule = get_object_or_404(Schedule, uuid=kwargs['uuid'])
         serializer = ScheduleListSerializer(schedule)
         return Response(serializer.data)
 
 class DeleteSchedule(APIView):
+    """
+    delete a schedule
+    """
     def get(self, request, *args, **kwargs):
-        schedule = get_object_or_404(models.Schedule, uuid=kwargs['uuid'])
+        schedule = get_object_or_404(Schedule, uuid=kwargs['uuid'])
         schedule.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class TeacherSchedulesView(APIView):
+    """
+    retrieve teacher schedules
+    """
     permission_classes = [IsAuthenticated]
-
     def get(self, request, *args, **kwargs):
         if not "uuid" in kwargs.keys():
             teacher = request.user
         else:
-            teacher = get_object_or_404(models.User, uuid=kwargs["uuid"])
+            teacher = get_object_or_404(User, uuid=kwargs["uuid"])
 
         branch = request.GET.get("branch", None)
         schedules = Schedule.objects.filter(teacher=teacher).order_by("date")
@@ -85,7 +90,10 @@ class TeacherSchedulesView(APIView):
         return Response(serializer.data)
 
 class CreateScheduleView(APIView):
-    permission_classes = [IsAuthenticated]
+    """
+    create a new schedules
+    """
+    permission_classes = [IsAuthenticated, IsTeacher]
 
     def post(self, request, *args, **kwargs):
         serializer = ScheduleCreateSerializer(data=request.data, context={"request": request})

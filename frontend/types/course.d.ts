@@ -1,5 +1,6 @@
-declare interface ICourses{
-    name: string,
-    teacher: IUser, 
-    slug: string,
+declare interface ICourses {
+  uuid: string;
+  name: string;
+  teacher: IUser;
+  slug: string;
 }

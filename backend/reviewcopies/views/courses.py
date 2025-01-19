@@ -1,6 +1,10 @@
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from reviewcopies.permissions import IsTeacher
 from rest_framework.generics import ListAPIView
+from rest_framework.views import APIView
 from reviewcopies import models
 from reviewcopies.serializers.courses import CourseListSerializer
 
@@ -47,3 +51,37 @@ class TeacherCourseListView(ListAPIView):
         return queryset
 
 teacher_course_list_view = TeacherCourseListView.as_view()
+
+class CreateCourseView(APIView):
+    permission_classes = [IsAuthenticated, IsTeacher]
+    def post(self, request, *args, **kwargs):
+        teacher = request.user
+        name = request.data.get("name")
+        if name is None:
+            return Response({"error": "Name is required"}, status=400)
+        session_slug = request.data.get("session")
+        branch_slug = request.data.get("branch")
+        if session_slug is None or branch_slug is None:
+            return Response({"error": "Session and Branch are required"}, status=400)
+        branch = models.Branch.objects.get(slug=branch_slug)
+        session = models.Session.objects.get(slug=session_slug)
+        course = models.Course.objects.create(name=name, teacher=teacher)
+        branch.courses.add(course)
+        session.courses.add(course)
+        return Response({
+            "message": "Course created successfully",
+            "course": CourseListSerializer(course).data
+        })
+
+create_course_view = CreateCourseView.as_view()
+
+class CourseByTeacherAndBranchs(APIView):
+    def get(self, request, *args, **kwargs):
+        teacher_id = self.kwargs.get("uuid")
+        branch_slug = self.kwargs.get("branch")
+        teacher = get_object_or_404(models.User, uuid=teacher_id)
+        branch = get_object_or_404(models.Branch, slug=branch_slug)
+        courses = branch.courses.filter(teacher=teacher)
+        serializer = CourseListSerializer(courses, many=True)
+        return Response(serializer.data)
+course_by_teacher_and_branch_view = CourseByTeacherAndBranchs.as_view()

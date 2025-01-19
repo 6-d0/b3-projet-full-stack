@@ -7,4 +7,4 @@ class CourseListSerializer(serializers.ModelSerializer):
     teacher = users.UserDetailSerializer(read_only=True)
     class Meta:
         model = models.Course
-        fields = ["id", "name", "slug", "teacher_name", "teacher", "session_name"]
+        fields = ["uuid", "id", "name", "slug", "teacher_name", "teacher", "session_name"]

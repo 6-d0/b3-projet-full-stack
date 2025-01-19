@@ -9,5 +9,4 @@ urlpatterns = [
     path("registrations/", include("reviewcopies.urls.api.v1.registrations")),
     path("timeslots/",include("reviewcopies.urls.api.v1.timeslots")),
     path("courses/", include("reviewcopies.urls.api.v1.courses")),
-    path("student/", include("reviewcopies.urls.api.v1.test"))
 ]

@@ -19,7 +19,9 @@
 
       <div class="space-y-1">
         <div class="text-lg font-semibold text-indigo-800">Email</div>
-        <div class="text-xl text-gray-900">{{ user?.email }}</div>
+        <a :href="`mailto:${user?.email}`" class="text-xl text-blue-600">{{
+          user?.email
+        }}</a>
       </div>
 
       <div class="space-y-1">
