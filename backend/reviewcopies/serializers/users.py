@@ -8,4 +8,4 @@ __all__ = ["UserDetailSerializer"]
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.User
-        fields = ["uuid","username","pk", "last_name", "first_name", "role"]
+        fields = ["uuid","username","pk", "last_name", "first_name", "role", "email"]
