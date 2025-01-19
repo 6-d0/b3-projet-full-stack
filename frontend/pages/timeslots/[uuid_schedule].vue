@@ -39,8 +39,8 @@
               Register
             </NuxtLink>
             <NuxtLink
-            v-if="user?.role === 'teacher' && isRegistration(timeslot.uuid)"
-            :to="`/timeslots/${timeslot.uuid}/details`"
+              v-if="user?.role === 'teacher' && isRegistration(timeslot.uuid)"
+              :to="`/timeslots/${timeslot.uuid}/details`"
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
             >
               Details
@@ -51,7 +51,7 @@
               class="cursor-default disabled bg-gray-500 text-white font-bold py-2 px-4 rounded-full"
             >
               Details
-        </button>
+            </button>
           </td>
           <td>
             <span v-if="isRegistration(timeslot.uuid)">

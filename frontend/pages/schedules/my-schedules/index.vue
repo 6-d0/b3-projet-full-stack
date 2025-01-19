@@ -1,5 +1,5 @@
 <template>
-     <!-- modals -->
+  <!-- modals -->
   <div
     id="popup-modal"
     tabindex="-1"
@@ -70,47 +70,66 @@
   </div>
 
   <!-- page -->
-    <Navbar/>
-    <div class="p-6 w-[75vw] mx-auto">
-  <ul v-for="(session, index) in sessions" :key="index" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-    <li
-      v-if="schedules"
-      v-for="schedule in sortedSchedules(session)"
-      :key="schedule.uuid"
-      class="p-6 bg-white border border-gray-200 rounded-lg shadow-lg h-full hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+  <Navbar />
+  <div class="p-6 w-[75vw] mx-auto">
+    <ul
+      v-for="(session, index) in sessions"
+      :key="index"
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
     >
-      <NuxtLink :to="`/timeslots/${schedule.uuid}/`">
-        <h5 class="mb-2 text-2xl font-semibold text-gray-900 dark:text-white">
-          {{ schedule.session.name }}
-        </h5>
-        <p class="mb-4 text-gray-700 dark:text-gray-300 text-sm">
-          {{ new Date(schedule.date).toLocaleDateString() }}
-        </p>
-        <div class="h-6">
-            <p v-if="schedule.classroom" class="text-sm font-normal text-gray-700 dark:text-gray-400 my-3">
-                Local: {{ schedule.classroom }}
-            </p>
-        </div>
-      </NuxtLink>
-      <div class="flex justify-between items-center space-x-4">
-      <button
-        @click="() => { changeCanSubscribe(schedule.pk, schedule.can_subscribe); schedule.can_subscribe = !schedule.can_subscribe; }"
-        class="flex items-center justify-between mt-4 relative bottom-0"
+      <li
+        v-if="schedules"
+        v-for="schedule in sortedSchedules(session)"
+        :key="schedule.uuid"
+        class="p-6 bg-white border border-gray-200 rounded-lg shadow-lg h-full hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
       >
-        <span
-          v-if="schedule.can_subscribe"
-          class="px-3 py-1 bg-green-600 text-white font-semibold rounded-lg shadow-md"
-        >
-          Inscription active {{ schedule.can_subscribe_until ? `(${new Date(schedule.can_subscribe_until).toLocaleDateString()})` : "" }}
-        </span>
-        <span
-          v-else
-          class="px-3 py-1 bg-red-600 text-white font-semibold rounded-lg shadow-md"
-        >
-          Inscription inactive
-        </span>
-      </button>
-      <button
+        <NuxtLink :to="`/timeslots/${schedule.uuid}/`">
+          <h5 class="mb-2 text-2xl font-semibold text-gray-900 dark:text-white">
+            {{ schedule.session.name }}
+          </h5>
+          <p class="mb-4 text-gray-700 dark:text-gray-300 text-sm">
+            {{ new Date(schedule.date).toLocaleDateString() }}
+          </p>
+          <div class="h-6">
+            <p
+              v-if="schedule.classroom"
+              class="text-sm font-normal text-gray-700 dark:text-gray-400 my-3"
+            >
+              Local: {{ schedule.classroom }}
+            </p>
+          </div>
+        </NuxtLink>
+        <div class="flex justify-between items-center space-x-4">
+          <button
+            @click="
+              () => {
+                changeCanSubscribe(schedule.pk, schedule.can_subscribe);
+                schedule.can_subscribe = !schedule.can_subscribe;
+              }
+            "
+            class="flex items-center justify-between mt-4 relative bottom-0"
+          >
+            <span
+              v-if="schedule.can_subscribe"
+              class="px-3 py-1 bg-green-600 text-white font-semibold rounded-lg shadow-md"
+            >
+              Inscription active
+              {{
+                schedule.can_subscribe_until
+                  ? `(${new Date(
+                      schedule.can_subscribe_until
+                    ).toLocaleDateString()})`
+                  : ""
+              }}
+            </span>
+            <span
+              v-else
+              class="px-3 py-1 bg-red-600 text-white font-semibold rounded-lg shadow-md"
+            >
+              Inscription inactive
+            </span>
+          </button>
+          <button
             @click="() => openModal(schedule.uuid)"
             data-modal-target="popup-modal"
             data-schedule="`${schedule.uuid}`"
@@ -132,119 +151,124 @@
               />
             </svg>
           </button>
-          </div>
-    </li>
-  </ul>
-</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</template>
 
-  </template>
+<script lang="ts">
+import { ref, onMounted } from "vue";
 
-  <script lang="ts">
-  import { ref, onMounted } from 'vue';
+export default {
+  setup() {
+    const selectedScheduleUuid = ref<string>();
+    const isModalOpen = ref<boolean>(false);
+    const sessions = ref<ISessions>([]);
+    const schedules = ref<ISchedules[] | null>(null);
 
-  export default {
-    setup() {
-        const selectedScheduleUuid = ref<string>();
-        const isModalOpen = ref<boolean>(false)
-      const sessions = ref<ISessions>([]);
-      const schedules = ref<ISchedules[] | null>(null);
+    /**
+     * Affiche le modal avant de supprimer
+     * @param uuid l'uuid du schedule
+     */
+    const openModal = (uuid: string) => {
+      selectedScheduleUuid.value = uuid;
+      isModalOpen.value = true;
+    };
 
-      /**
-         * Affiche le modal avant de supprimer
-         * @param uuid l'uuid du schedule
-         */
-        const openModal = (uuid: string) => {
-        selectedScheduleUuid.value = uuid;
-        isModalOpen.value = true;
-        };
+    /**
+     * Ferme le modal
+     */
+    const closeModal = () => {
+      isModalOpen.value = false;
+    };
 
-        /**
-         * Ferme le modal
-         */
-        const closeModal = () => {
-        isModalOpen.value = false;
-        };
+    const fetchSchedules = async () => {
+      try {
+        const { data: schedules_data } = await useAPI<ISchedules[] | null>(
+          "/schedules/teacher-schedules"
+        );
+        schedules.value = schedules_data?.value || [];
 
-      const fetchSchedules = async () => {
-        try {
-          const { data: schedules_data } = await useAPI<ISchedules[] | null>("/schedules/teacher-schedules");
-          schedules.value = schedules_data?.value || [];
-
-          if (schedules.value) {
-            schedules.value.forEach(s => {
-                if(sessions.value.filter((session) => session.slug === s.session.slug ).length === 0){
-                    sessions.value.push(s.session);
-                }
-            });
-          }
-        } catch (error) {
-          console.error("Erreur:", error);
+        if (schedules.value) {
+          schedules.value.forEach((s) => {
+            if (
+              sessions.value.filter(
+                (session) => session.slug === s.session.slug
+              ).length === 0
+            ) {
+              sessions.value.push(s.session);
+            }
+          });
         }
-      };
-
-      const sortedSchedules = (session: ISession)=>{
-        if(!schedules.value) return []
-        return schedules.value
-            .filter(s => s.session.slug === session.slug)
-            .sort((s1, s2) => { return new Date(s1.date).getTime() - new Date(s2.date).getTime() })
+      } catch (error) {
+        console.error("Erreur:", error);
       }
+    };
 
-      /**
-      *
+    const sortedSchedules = (session: ISession) => {
+      if (!schedules.value) return [];
+      return schedules.value
+        .filter((s) => s.session.slug === session.slug)
+        .sort((s1, s2) => {
+          return new Date(s1.date).getTime() - new Date(s2.date).getTime();
+        });
+    };
+
+    /**
+     *
      * @param id l'id du schedule
      * @param current la valeur courante de canSubscribe
      */
     const changeCanSubscribe = async (id: number, current: boolean) => {
-        const data = {
-            canSubscribe: current ? false : true,
-        };
-        const response = await useAPI(`/schedules/update-can-subscribe/${id}/`, {
-            method: "POST",
-            body: data,
-            headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": `${userStore().token}`,
-            },
-            credentials: "include",
-        });
+      const data = {
+        canSubscribe: current ? false : true,
+      };
+      const response = await useAPI(`/schedules/update-can-subscribe/${id}/`, {
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": `${userStore().token}`,
+        },
+        credentials: "include",
+      });
     };
-
 
     /**
      * Supprime le schedule d'uuid uuid
      * @param uuid l'uuid du schedule a supprimer
      */
     const deleteSchedule = async (uuid: string | undefined) => {
-        const token = userStore().token
-        const response = await useAPI(`/schedules/delete/${uuid}/`, {
-            method: "GET",
-            headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": `${token}`,
-            },
-            credentials: "include",
-        });
-        if(schedules.value)
-            schedules.value = schedules.value.filter((s) => s.uuid !== uuid);
-        closeModal();
+      const token = userStore().token;
+      const response = await useAPI(`/schedules/delete/${uuid}/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": `${token}`,
+        },
+        credentials: "include",
+      });
+      if (schedules.value)
+        schedules.value = schedules.value.filter((s) => s.uuid !== uuid);
+      closeModal();
     };
 
+    onMounted(() => {
+      fetchSchedules();
+    });
 
-      onMounted(() => {
-        fetchSchedules();
-      });
-
-      return {
-        sessions,
-        schedules,
-        sortedSchedules,
-        changeCanSubscribe,
-        openModal,
-        closeModal,
-        deleteSchedule,
-        selectedScheduleUuid,
-        isModalOpen
-      };
-    },
-  };
-  </script>
+    return {
+      sessions,
+      schedules,
+      sortedSchedules,
+      changeCanSubscribe,
+      openModal,
+      closeModal,
+      deleteSchedule,
+      selectedScheduleUuid,
+      isModalOpen,
+    };
+  },
+};
+</script>

@@ -1,5 +1,5 @@
 <template>
-    <Navbar/>
+  <Navbar />
   <div class="container mx-auto p-6">
     <h3 class="text-2xl font-semibold text-gray-900 mb-6">
       <span>{{ session?.name }}</span>
