@@ -22,7 +22,7 @@
               <p>
                 {{ registration.slot.schedule.teacher.last_name.toUpperCase() }}
                 {{ registration.slot.schedule.teacher.first_name }}
-                ({{ registration.slot.schedule.classroom }})
+                ({{ registration.slot.schedule.classroom?registration.slot.schedule.classroom:"pas de local" }})
               </p>
             </div>
 
@@ -32,6 +32,7 @@
               <span class="font-medium">
                 {{ formatTime(registration.slot.begin_time) }} -
                 {{ formatTime(registration.slot.end_time) }}
+                ({{ new Date(registration.date).toLocaleDateString() }})
               </span>
             </div>
           </div>

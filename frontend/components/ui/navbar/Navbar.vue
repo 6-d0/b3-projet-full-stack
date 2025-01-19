@@ -40,7 +40,7 @@ export default defineComponent({
     class="lg:px-16 px-4 bg-white flex flex-wrap items-center py-4 shadow-md mb-4 static w-full"
   >
     <div class="flex-1 flex justify-between items-center">
-      <a href="#" class="text-xl">reviewcopies</a>
+      <a href="/" class="text-xl">reviewcopies</a>
     </div>
     <div class="hidden md:flex md:items-center md:w-auto w-full" id="menu">
       <nav>
@@ -51,11 +51,11 @@ export default defineComponent({
           <li v-if="isStudent" class="md:p-4 py-3 px-0 block">
             <router-link to="/timeslots/my-timeslots">Mes inscriptions</router-link>
           </li>
-          <li class="md:p-4 py-3 px-0 block">
-            <router-link to="#">Services</router-link>
+          <li class="md:p-4 py-3 px-0 block" v-if="user?.role === 'teacher'">
+            <router-link to="/schedules/">Créer un planning</router-link>
           </li>
-          <li class="md:p-4 py-3 px-0 block">
-            <router-link to="#">Contact</router-link>
+          <li class="md:p-4 py-3 px-0 block" v-if="isTeacher">
+            <router-link to="/schedules/my-schedules">Mes plannings</router-link>
           </li>
           <li class="md:p-6 py-4 px-0 block relative group">
             <span class="cursor-pointer hover:text-gray-500 text-lg font-semibold">

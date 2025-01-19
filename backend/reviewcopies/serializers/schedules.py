@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from reviewcopies import models
+from reviewcopies.serializers.sessions import SessionListSerializer
 
 
 class TeacherDetailSerializer(serializers.ModelSerializer):
@@ -11,6 +12,7 @@ class TeacherDetailSerializer(serializers.ModelSerializer):
 class ScheduleListSerializer(serializers.ModelSerializer):
     session = serializers.SlugRelatedField(slug_field="slug", read_only=True)
     teacher = TeacherDetailSerializer()
+    session = SessionListSerializer()
 
     class Meta:
         model = models.Schedule

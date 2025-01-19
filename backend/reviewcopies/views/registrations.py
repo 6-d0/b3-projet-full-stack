@@ -65,13 +65,26 @@ class AddRegistrationView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class RegistrationByTimeSlot(APIView):
+    permission_classes = [IsTeacher, IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        uuid = kwargs.pop("uuid")
+        try:
+            slot = Timeslot.objects.filter(uuid=uuid).first()
+            registration = Registration.objects.filter(slot=slot).first()
+            serializer = RegistrationSerializer(registration)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Timeslot.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
 class RegistrationByScheduleUUID(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         uuid = kwargs.pop("uuid")
         try:
-            slot = Schedule.objects.get(uuid=uuid)
-            registration = Registration.objects.filter(slot__schedule=slot)
+            schedule = Schedule.objects.get(uuid=uuid)
+            registration = Registration.objects.filter(slot__schedule=schedule)
             serializer = RegistrationSerializer(registration, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Timeslot.DoesNotExist:

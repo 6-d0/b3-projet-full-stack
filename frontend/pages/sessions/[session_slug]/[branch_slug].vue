@@ -118,9 +118,11 @@
           <h6 class="mb-4 text-l font-small text-gray-800 dark:text-gray-300">
             {{ schedule.teacher.email }}
           </h6>
-          <p class="text-sm font-normal text-gray-700 dark:text-gray-400 my-3">
-            {{ schedule.classroom }}
-          </p>
+          <div class="h-6 mb-2">
+              <p class="text-sm font-normal text-gray-700 dark:text-gray-400 my-3">
+                  {{ schedule.classroom }}
+                </p>
+            </div>
         </NuxtLink>
         <div class="flex justify-between items-center space-x-4">
           <button
@@ -191,7 +193,7 @@
       <!-- schedule avec timeslots uniquement -->
       <li
         v-for="schedule in schedules.filter(
-          (s) => hasTimeSlot(s.uuid) && s.can_subscribe
+          (s) => hasTimeSlot(s.uuid) && s.can_subscribe && new Date(s.date) > new Date()
         )"
         v-else
         class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
@@ -201,12 +203,14 @@
             {{ schedule.teacher.last_name.toUpperCase() }}
             {{ schedule.teacher.first_name }}
           </h5>
-          <h6 class="mb-4 text-l font-small text-gray-800 dark:text-gray-300">
+          <h6 class="mb-2 text-l font-small text-gray-800 dark:text-gray-300">
             {{ schedule.teacher.email }}
           </h6>
-          <p class="text-sm font-normal text-gray-700 dark:text-gray-400 my-3">
-            {{ schedule.classroom }}
-          </p>
+          <div class="h-6 mb-2">
+              <p class="text-sm font-normal text-gray-700 dark:text-gray-400">
+                  {{ schedule.classroom }}
+                </p>
+            </div>
           <div>
             <span
               v-if="schedule.can_subscribe"
