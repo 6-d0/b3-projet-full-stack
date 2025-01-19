@@ -206,13 +206,13 @@ Schedule:
       session_id: 1
       teacher_id: 2
 
-    - date: 2025-01-22
-      can_subscribe: true
-      classroom: B4
-      can_subscribe_until: null
-      uuid: ef9234aa-5f15-44c0-a65c-36c9562965cc
-      session_id: 1
-      teacher_id: 2
+    # - date: 2025-01-22
+    #   can_subscribe: true
+    #   classroom: B4
+    #   can_subscribe_until: null
+    #   uuid: ef9234aa-5f15-44c0-a65c-36c9562965cc
+    #   session_id: 1
+    #   teacher_id: 2
 
     - date: 2025-01-22
       can_subscribe: false
