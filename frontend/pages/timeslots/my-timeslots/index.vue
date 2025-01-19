@@ -8,7 +8,7 @@
         v-for="registration in registrations"
         class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md overflow-hidden"
       >
-        <NuxtLink :to="`my-timeslots/${registration.uuid}`">
+        <NuxtLink :to="`${registration.uuid}`">
           <div class="p-6 space-y-4 h-52">
             <div class="flex justify-between items-center h-1/3">
               <h5

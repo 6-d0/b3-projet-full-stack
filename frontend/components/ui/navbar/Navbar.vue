@@ -1,16 +1,35 @@
 <script lang="ts">
 import { NuxtLink } from "#build/components";
 import { defineComponent } from "vue";
+import { userStore } from "@/stores/user"; // Importez le store utilisateur
+
 export default defineComponent({
   name: "Navbar",
   computed: {
+    user() {
+      return userStore().user;
+    },
     isStudent() {
-      const user = userStore().user;
-      return user?.role === "student";
+      return this.user?.role === "student";
     },
     isTeacher() {
-      const user = userStore().user;
-      return user?.role === "teacher";
+      return this.user?.role === "teacher";
+    },
+  },
+  methods: {
+    async logout() {
+      try {
+        const response = await fetch(`/api/v1/auth/logout/`, {
+            body: null,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",});
+        userStore().$reset();
+      } catch (error) {
+        console.error("Erreur lors de la déconnexion:", error);
+      }
     },
   },
 });
@@ -25,16 +44,12 @@ export default defineComponent({
     </div>
     <div class="hidden md:flex md:items-center md:w-auto w-full" id="menu">
       <nav>
-        <ul
-          class="md:flex items-center justify-between text-base text-gray-700 pt-4 md:pt-0"
-        >
+        <ul class="md:flex items-center justify-between text-base text-gray-700 pt-4 md:pt-0">
           <li class="md:p-4 py-3 px-0 block">
             <router-link to="/">Accueil</router-link>
           </li>
           <li v-if="isStudent" class="md:p-4 py-3 px-0 block">
-            <router-link to="/timeslots/my-timeslots"
-              >Mes inscriptions</router-link
-            >
+            <router-link to="/timeslots/my-timeslots">Mes inscriptions</router-link>
           </li>
           <li class="md:p-4 py-3 px-0 block">
             <router-link to="#">Services</router-link>
@@ -42,8 +57,25 @@ export default defineComponent({
           <li class="md:p-4 py-3 px-0 block">
             <router-link to="#">Contact</router-link>
           </li>
-          <li class="md:p-4 py-3 px-0 block">
-            <NuxtLink :to="`#`">Se déconnecter</NuxtLink>
+          <li class="md:p-6 py-4 px-0 block relative group">
+            <span class="cursor-pointer hover:text-gray-500 text-lg font-semibold">
+              {{ user?.last_name.toUpperCase() }} {{ user?.first_name }}
+            </span>
+            <ul class="absolute hidden group-hover:block bg-white shadow-lg rounded-lg mt-4 w-56 text-base -left-4">
+              <NuxtLink class="py-3 w-[100%]" :to="`/user/details`">
+                <li class="px-6 py-3 hover:bg-gray-100 text-lg">
+                  Mon profil
+                </li>
+              </NuxtLink>
+              <NuxtLink :to="`/settings`">
+                <li class="px-6 py-3 hover:bg-gray-100 text-lg">
+                  Paramètres
+                </li>
+              </NuxtLink>
+              <li class="px-6 py-3 hover:bg-gray-100 text-lg" @click="logout">
+                Se déconnecter
+              </li>
+            </ul>
           </li>
         </ul>
       </nav>

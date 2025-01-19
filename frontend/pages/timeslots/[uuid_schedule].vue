@@ -5,7 +5,7 @@
       {{ teacher?.last_name }} {{ teacher?.first_name }}
     </h2>
 
-    <table class="min-w-[60vw] table-auto mx-auto">
+    <table class="min-w-full table-auto mx-auto">
       <thead>
         <tr class="bg-gray-100 text-gray-900">
           <th class="px-6 py-3 text-center">Time Slot</th>
