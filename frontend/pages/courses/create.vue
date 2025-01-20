@@ -118,6 +118,7 @@ export default {
           "X-CSRFToken": `${userStore().token}`,
         },
       });
+      return navigateTo("/courses/details");
     };
 
     return {
