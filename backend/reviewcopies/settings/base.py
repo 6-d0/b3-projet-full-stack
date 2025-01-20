@@ -26,11 +26,7 @@ SECRET_KEY = "django-insecure-=(_*%3bp-e^o030x$a^+hqobs67742m&l5^op(sx-#t8xs-%qm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    '10.0.2.2'
-]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "10.0.2.2"]
 
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
@@ -49,7 +45,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "knox",
-    "drf_spectacular"
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -148,14 +144,14 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'reviewcopies API',
-    'DESCRIPTION': 'reviewcopies API documentation',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
+    "TITLE": "reviewcopies API",
+    "DESCRIPTION": "reviewcopies API documentation",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
 
 REST_KNOX = {

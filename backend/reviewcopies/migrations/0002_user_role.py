@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('reviewcopies', '0001_initial'),
+        ("reviewcopies", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='role',
-            field=models.CharField(blank=True, choices=[('student', 'Student'), ('teacher', 'Teacher')], max_length=10, null=True),
+            model_name="user",
+            name="role",
+            field=models.CharField(
+                blank=True,
+                choices=[("student", "Student"), ("teacher", "Teacher")],
+                max_length=10,
+                null=True,
+            ),
         ),
     ]

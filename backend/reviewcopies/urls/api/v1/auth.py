@@ -13,13 +13,13 @@ class LoginView(KnoxLoginView):
         serializer = AuthTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
-        if 'e' in str(user.username):
-            user.role = 'student'
-        elif 'h' in str(user.username):
-            user.role = 'teacher'
+        if "e" in str(user.username):
+            user.role = "student"
+        elif "h" in str(user.username):
+            user.role = "teacher"
         else:
             user.role = "admin"
-        user.save(update_fields=['role'])
+        user.save(update_fields=["role"])
         login(request, user)
         return super(LoginView, self).post(request, format=None)
 

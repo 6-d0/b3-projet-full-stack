@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from reviewcopies import models
 from reviewcopies.serializers.sessions import SessionListSerializer
 
@@ -28,7 +29,6 @@ class ScheduleListSerializer(serializers.ModelSerializer):
         ]
 
 
-
 class ScheduleCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Schedule
@@ -42,11 +42,19 @@ class ScheduleCreateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if data.get("can_subscribe_until") is not None:
-            if data["date"] < data["can_subscribe_until"].date() :
-                raise serializers.ValidationError("The subscription date cannot exceed the schedule date.")
-        if data["classroom"] is not None :
-            if models.Schedule.objects.filter(classroom=data["classroom"], date=data["date"], teacher=self.context["request"].user).exists():
-                raise serializers.ValidationError("This classroom is already scheduled at this date.")
+            if data["date"] < data["can_subscribe_until"].date():
+                raise serializers.ValidationError(
+                    "The subscription date cannot exceed the schedule date."
+                )
+        if data["classroom"] is not None:
+            if models.Schedule.objects.filter(
+                classroom=data["classroom"],
+                date=data["date"],
+                teacher=self.context["request"].user,
+            ).exists():
+                raise serializers.ValidationError(
+                    "This classroom is already scheduled at this date."
+                )
         return data
 
     def create(self, validated_data):
