@@ -6,50 +6,59 @@
     >
       Mes Inscriptions
     </h1>
-    <ul
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-    >
-      <li
-        v-for="registration in registrations"
-        :key="registration.uuid"
-        class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md overflow-hidden transition-transform transform hover:scale-105"
+    <div>
+      <ul
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+        v-if="registrations && registrations?.length > 0"
       >
-        <NuxtLink
-          :to="`/timeslots/my-timeslots/${registration.uuid}/`"
-          class="block p-6 space-y-4 h-full"
+        <li
+          v-for="registration in registrations"
+          :key="registration.uuid"
+          class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md overflow-hidden transition-transform transform hover:scale-105"
         >
-          <h5
-            class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate"
+          <NuxtLink
+            :to="`/timeslots/my-timeslots/${registration.uuid}/`"
+            class="block p-6 space-y-4 h-full"
           >
-            {{ registration.course.name }}
-          </h5>
+            <h5
+              class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white truncate"
+            >
+              {{ registration.course.name }}
+            </h5>
 
-          <div class="text-sm font-medium text-gray-600 dark:text-gray-300">
-            <p>
-              {{ registration.slot.schedule.teacher.last_name.toUpperCase() }}
-              {{ registration.slot.schedule.teacher.first_name }}
-              <span class="text-xs text-gray-500">
-                ({{ registration.slot.schedule.classroom || "Pas de local" }})
+            <div class="text-sm font-medium text-gray-600 dark:text-gray-300">
+              <p>
+                {{ registration.slot.schedule.teacher.last_name.toUpperCase() }}
+                {{ registration.slot.schedule.teacher.first_name }}
+                <span class="text-xs text-gray-500">
+                  ({{ registration.slot.schedule.classroom || "Pas de local" }})
+                </span>
+              </p>
+            </div>
+
+            <div
+              class="mt-4 flex flex-col items-start text-sm text-gray-800 dark:text-gray-200 space-y-1"
+            >
+              <span class="font-medium">
+                {{ formatTime(registration.slot.begin_time) }} -
+                {{ formatTime(registration.slot.end_time) }}
               </span>
-            </p>
-          </div>
-
-          <div
-            class="mt-4 flex flex-col items-start text-sm text-gray-800 dark:text-gray-200 space-y-1"
-          >
-            <span class="font-medium">
-              {{ formatTime(registration.slot.begin_time) }} -
-              {{ formatTime(registration.slot.end_time) }}
-            </span>
-            <span class="text-xs text-gray-500">
-              {{
-                new Date(registration.slot.schedule.date).toLocaleDateString()
-              }}
-            </span>
-          </div>
-        </NuxtLink>
-      </li>
-    </ul>
+              <span class="text-xs text-gray-500">
+                {{
+                  new Date(registration.slot.schedule.date).toLocaleDateString()
+                }}
+              </span>
+            </div>
+          </NuxtLink>
+        </li>
+      </ul>
+      <div
+        class="text-xl w-full h-full flex items-center justify-center"
+        v-else
+      >
+        Aucune inscription
+      </div>
+    </div>
   </div>
 </template>
 

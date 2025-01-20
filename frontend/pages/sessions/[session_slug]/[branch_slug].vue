@@ -76,7 +76,10 @@
       {{ session?.name }} - {{ branch?.name }}
     </h2>
 
-    <div class="mb-6 text-lg font-semibold text-gray-800 dark:text-gray-200">
+    <div
+      class="mb-6 text-lg font-semibold text-gray-800 dark:text-gray-200"
+      v-if="schedules.length > 0"
+    >
       Vue par professeur
     </div>
 
@@ -85,6 +88,12 @@
       class="text-center text-xl text-gray-500 dark:text-gray-400 mb-6"
     >
       Chargement des horaires...
+    </div>
+    <div
+      class="my-auto h-max w-full justify-center flex items-center text-xl text-gray-700"
+      v-else-if="schedules.length === 0"
+    >
+      Aucun planning actuellement
     </div>
 
     <ul
@@ -238,7 +247,7 @@
       </li>
     </ul>
 
-    <div class="" v-if="userStore().isStudent()">
+    <div class="" v-if="userStore().isStudent() && schedules.length > 0">
       <div
         :key="branch?.uuid"
         class="mt-10 mb-6 text-lg font-semibold text-gray-800 dark:text-gray-200"
@@ -263,13 +272,17 @@
             -
             {{ scheduleCourse.schedule?.teacher.last_name }}
             {{ scheduleCourse.schedule?.teacher.first_name }}
+            <span v-if="scheduleCourse.schedule?.classroom">
+              -
+              {{ scheduleCourse.schedule?.classroom }}
+            </span>
           </span>
         </div>
         <ul
           class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
         >
           <li
-            class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+            class="p-2 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
             v-for="course in scheduleCourse.course"
           >
             <NuxtLink
@@ -306,7 +319,7 @@
                   }}
                 </p>
               </div>
-              <div>
+              <div class="my-2">
                 <span
                   v-if="scheduleCourse.schedule?.can_subscribe"
                   class="text-center w-fit px-2 py-1 bg-green-600 text-white font-semibold rounded-lg shadow-md"

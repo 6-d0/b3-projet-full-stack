@@ -15,7 +15,7 @@
           {{ registration.course.teacher.first_name }}
         </p>
         <p class="mt-1">
-          <span class="font-medium text-gray-600">Mail :</span>
+          <span class="font-medium text-gray-600">Mail : </span>
           <a
             :href="`mailto:${registration.course.teacher.email}`"
             class="text-blue-500 hover:underline"
@@ -49,8 +49,19 @@
           {{ registration.slot.schedule.date.toLocaleDateString() }}
         </p>
       </div>
-    </div>
 
+      <div class="border-t border-gray-200 mt-4 pt-4">
+        <h2 class="text-xl font-semibold text-gray-700">Heure de passage</h2>
+        <p class="mt-2">
+          <span class="font-medium text-gray-600">De :</span>
+          {{ formatTime(new Date(registration.slot.begin_time)) }}
+        </p>
+        <p class="mt-1">
+          <span class="font-medium text-gray-600">À : </span>
+          {{ formatTime(new Date(registration.slot.end_time)) }}
+        </p>
+      </div>
+    </div>
     <p v-else class="text-center text-gray-500">Chargement...</p>
   </div>
 </template>
@@ -85,8 +96,15 @@ export default defineComponent({
       }
     };
 
+    function formatTime(d: Date) {
+      let hours = d.getHours();
+      let minutes = d.getMinutes();
+      const lzero = (d: number) => `${d < 10 ? "0" : ""}${d}`;
+      return `${lzero(hours)}:${lzero(minutes)}`;
+    }
+
     fetchRegistration();
-    return { registration };
+    return { registration, formatTime };
   },
 });
 </script>
