@@ -2,6 +2,7 @@
 import { NuxtLink } from "#build/components";
 import { defineComponent } from "vue";
 import { userStore } from "@/stores/user";
+import authGlobal from "~/middleware/auth.global";
 
 export default defineComponent({
   name: "Navbar",
@@ -22,15 +23,27 @@ export default defineComponent({
   methods: {
     async logout() {
       try {
-        const response = await fetch(`/api/v1/auth/logout/`, {
+        const response = await fetch(`/auth/logout/`, {
           body: null,
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "X-CSRFToken": `${userStore().token}`,
           },
           credentials: "include",
         });
-        userStore().$reset();
+        if (response.ok) {
+          userStore().token = null;
+          userStore().user = null;
+          const { data, error } = await useAPI("/user/details/", {
+            credentials: "include",
+          });
+          if (error.value?.statusCode === 403) {
+            return await navigateTo(`/auth/login/?next=/`, {
+              external: true,
+            });
+          }
+        }
       } catch (error) {
         console.error("Erreur lors de la déconnexion:", error);
       }

@@ -1,0 +1,7 @@
+{% extends 'base_generic.html' %} {% block content %}
+<h1>Déconnexion</h1>
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Se déconnecter</button>
+</form>
+{% endblock %}
