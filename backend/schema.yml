@@ -1,0 +1,786 @@
+openapi: 3.0.3
+info:
+  title: reviewcopies API
+  version: 1.0.0
+  description: reviewcopies API documentation
+paths:
+  /api/v1/auth/login/:
+    post:
+      operationId: api_v1_auth_login_create
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/logout/:
+    post:
+      operationId: api_v1_auth_logout_create
+      tags:
+      - api
+      security:
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/logoutall/:
+    post:
+      operationId: api_v1_auth_logoutall_create
+      description: |-
+        Log the user out of all sessions
+        I.E. deletes all auth tokens for the user
+      tags:
+      - api
+      security:
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/branches/:
+    get:
+      operationId: api_v1_branches_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/branches/{session}/:
+    get:
+      operationId: api_v1_branches_list
+      parameters:
+      - in: path
+        name: session
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BranchList'
+          description: ''
+  /api/v1/branches/create/:
+    post:
+      operationId: api_v1_branches_create_create
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/courses/{uuid}/{branch}/:
+    get:
+      operationId: api_v1_courses_retrieve
+      parameters:
+      - in: path
+        name: branch
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/courses/{uuid}/courses/:
+    get:
+      operationId: api_v1_courses_courses_list
+      description: Retrieve all course for a specific teacher
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseList'
+          description: ''
+  /api/v1/courses/branch/{branch_id}/courses/:
+    get:
+      operationId: api_v1_courses_branch_courses_list
+      description: List of all courses for a sessions and a branch
+      parameters:
+      - in: path
+        name: branch_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseList'
+          description: ''
+  /api/v1/courses/create/:
+    post:
+      operationId: api_v1_courses_create_create
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/registrations/:
+    get:
+      operationId: api_v1_registrations_retrieve
+      description: Get all registrations
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/registrations/{uuid}/:
+    get:
+      operationId: api_v1_registrations_retrieve_2
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/registrations/{uuid}/details/:
+    get:
+      operationId: api_v1_registrations_details_retrieve
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/registrations/add/:
+    post:
+      operationId: api_v1_registrations_add_create
+      description: Create the registration with post method
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/registrations/my-registrations/:
+    get:
+      operationId: api_v1_registrations_my_registrations_retrieve
+      description: get registration linked to a user
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/schedules/{session}/{branch}/:
+    get:
+      operationId: api_v1_schedules_list
+      description: list all schedule of a specific session + branches
+      parameters:
+      - in: path
+        name: branch
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: session
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduleList'
+          description: ''
+  /api/v1/schedules/{uuid}/:
+    get:
+      operationId: api_v1_schedules_retrieve
+      description: return as schedule with uuid
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/schedules/create-schedule/:
+    post:
+      operationId: api_v1_schedules_create_schedule_create
+      description: create a new schedules
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/schedules/delete/{uuid}/:
+    get:
+      operationId: api_v1_schedules_delete_retrieve
+      description: delete a schedule
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/schedules/retrieve-schedule/{id}/:
+    get:
+      operationId: api_v1_schedules_retrieve_schedule_retrieve
+      description: |-
+        Permet de récupérer un planning (Schedule) par son identifiant (pk).
+        Seul le professeur associé peut voir les détails du planning.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/schedules/teacher-schedules/:
+    get:
+      operationId: api_v1_schedules_teacher_schedules_retrieve
+      description: retrieve teacher schedules
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/schedules/teacher-schedules/{uuid}/:
+    get:
+      operationId: api_v1_schedules_teacher_schedules_retrieve_2
+      description: retrieve teacher schedules
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/schedules/update-can-subscribe-until/{id}/:
+    post:
+      operationId: api_v1_schedules_update_can_subscribe_until_create
+      description: Permet de modifier uniquement la date de can_subscribe_until.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/schedules/update-can-subscribe/{id}/:
+    post:
+      operationId: api_v1_schedules_update_can_subscribe_create
+      description: |-
+        Permet de définir can_subscribe sur true ou false.
+        Si can_subscribe est false, can_subscribe_until est mis à null.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/sessions/:
+    get:
+      operationId: api_v1_sessions_list
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SessionList'
+          description: ''
+  /api/v1/sessions/{slug}/courses/:
+    patch:
+      operationId: api_v1_sessions_courses_partial_update
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: api_v1_sessions_courses_destroy
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/sessions/{slug}/delete/:
+    delete:
+      operationId: api_v1_sessions_delete_destroy
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/sessions/create/:
+    post:
+      operationId: api_v1_sessions_create_create
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/timeslots/{schedule_id}/:
+    get:
+      operationId: api_v1_timeslots_retrieve
+      description: |-
+        Retrieve all timeslots for a specific schedule.
+        Example endpoint:
+            GET /api/v1/timeslots/{schedule_id}/
+      parameters:
+      - in: path
+        name: schedule_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/timeslots/{uuid}/:
+    get:
+      operationId: api_v1_timeslots_retrieve_2
+      description: |-
+        Retrieve all timeslots for a specific schedule.
+        Example endpoint:
+            GET /api/v1/timeslots/{schedule_id}/
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/timeslots/{uuid}/available/:
+    get:
+      operationId: api_v1_timeslots_available_retrieve
+      parameters:
+      - in: path
+        name: uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/timeslots/create/:
+    post:
+      operationId: api_v1_timeslots_create_create
+      description: |-
+        Create multiple timeslots for a specific schedule.
+        Example endpoint:
+            POST /api/v1/timeslots/create/
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/user/details/:
+    get:
+      operationId: api_v1_user_details_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - knoxApiToken: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+components:
+  schemas:
+    BranchList:
+      type: object
+      properties:
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 250
+        pk:
+          type: integer
+          readOnly: true
+          title: ID
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseList'
+      required:
+      - courses
+      - name
+      - pk
+      - uuid
+    CourseList:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 250
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        teacher_name:
+          type: string
+          readOnly: true
+        teacher:
+          allOf:
+          - $ref: '#/components/schemas/UserDetail'
+          readOnly: true
+        session_name:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - name
+      - session_name
+      - teacher
+      - teacher_name
+      - uuid
+    RoleEnum:
+      enum:
+      - student
+      - teacher
+      - admin
+      type: string
+      description: |-
+        * `student` - Student
+        * `teacher` - Teacher
+        * `admin` - Admin
+    ScheduleList:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        pk:
+          type: integer
+          readOnly: true
+          title: ID
+        date:
+          type: string
+          format: date
+          description: Open date for registration
+        can_subscribe:
+          type: boolean
+          description: Open/Close registration
+        can_subscribe_until:
+          type: string
+          format: date-time
+          nullable: true
+          description: Students can subscribe until this date if provided
+        classroom:
+          type: string
+          description: Classroom where meeting occurs
+          maxLength: 50
+        teacher:
+          $ref: '#/components/schemas/TeacherDetail'
+        session:
+          $ref: '#/components/schemas/SessionList'
+      required:
+      - can_subscribe
+      - date
+      - pk
+      - session
+      - teacher
+      - uuid
+    SessionList:
+      type: object
+      properties:
+        pk:
+          type: integer
+          readOnly: true
+          title: ID
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        name:
+          type: string
+          title: Session name
+          maxLength: 250
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseList'
+      required:
+      - courses
+      - name
+      - pk
+      - uuid
+    TeacherDetail:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        last_name:
+          type: string
+          maxLength: 150
+        first_name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+      required:
+      - username
+      - uuid
+    UserDetail:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        pk:
+          type: integer
+          readOnly: true
+          title: ID
+        last_name:
+          type: string
+          maxLength: 150
+        first_name:
+          type: string
+          maxLength: 150
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+      required:
+      - pk
+      - username
+      - uuid
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    knoxApiToken:
+      type: http
+      scheme: bearer
