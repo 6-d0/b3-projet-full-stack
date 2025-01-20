@@ -31,7 +31,5 @@ const session_slug = route.params.slug;
 
 const { data: asessions } = await useAPI<ISession[]>("/sessions/");
 const session = asessions.value?.find((s) => s.slug === session_slug);
-const { data: branches } = await useAPI<IBranch[]>(
-  `/branches/${route.params.slug}`
-);
+const { data: branches } = await useAPI<IBranch[]>(`/branches/`);
 </script>

@@ -3,6 +3,11 @@ from django.urls import path
 
 urlpatterns = [
     path(
+        "<slug:slug>/courses/",
+        views.DeleteCourseFromSession.as_view(),
+        name="session-list",
+    ),
+    path(
         "<slug:slug>/delete/",
         views.DeleteSession.as_view(),
         name="session-list",

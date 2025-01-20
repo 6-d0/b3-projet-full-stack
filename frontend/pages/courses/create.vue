@@ -86,22 +86,17 @@ export default {
       }
     };
 
-    const fetchBranches = async (slug: string | null) => {
-      const { data: abranchs } = await useAPI<IBranch[]>(`/branches/${slug}/`);
+    const fetchBranches = async () => {
+      const { data: abranchs } = await useAPI<IBranch[]>(`/branches/`);
       console.log(abranchs.value);
       if (abranchs.value) {
         branchs.value = abranchs.value;
       }
     };
 
-    watch(selectedSession, (newSlug) => {
-      if (newSlug) {
-        fetchBranches(newSlug);
-      }
-    });
-
     onMounted(() => {
       fetchSession();
+      fetchBranches();
     });
 
     const save = async () => {

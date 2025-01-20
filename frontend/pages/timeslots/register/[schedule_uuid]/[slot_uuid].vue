@@ -39,7 +39,9 @@
           class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option
-            v-for="course in courses"
+            v-for="course in courses?.filter((c) => {
+              return schedule?.session.courses.some((s) => s.slug == c.slug);
+            })"
             :value="course.slug"
             :key="course.slug"
           >

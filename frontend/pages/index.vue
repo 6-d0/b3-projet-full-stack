@@ -90,15 +90,20 @@
         >
           Supprimer
         </button>
+        <NuxtLink
+          v-if="userStore().isTeacher()"
+          :to="`/sessions/add-courses/${session.slug}/`"
+          class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+        >
+          Ajouter des cours
+        </NuxtLink>
       </li>
     </ul>
   </div>
 </template>
 
 <script setup lang="ts">
-import Modal from "~/components/ui/modal/Modal.vue";
 import Navbar from "~/components/ui/navbar/Navbar.vue";
-import Slug from "./sessions/[slug].vue";
 
 const showModal = ref<boolean>(false);
 const selectedSessionSlug = ref<string | null>(null);

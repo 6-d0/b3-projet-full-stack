@@ -245,7 +245,12 @@
       >
         <h1 class="text-black-600">Vue par cours</h1>
       </div>
-      <div class="w-full mb-6 py-2" v-for="scheduleCourse in courses">
+      <div
+        class="w-full mb-6 py-2"
+        v-for="scheduleCourse in courses.filter(
+          (c) => c.schedule?.session.slug === session_slug
+        )"
+      >
         <div class="flex items-center">
           <span class="text-s my-2 font-semibold">
             {{
@@ -354,9 +359,7 @@ const user = userStore().user;
  */
 async function fetchBranches(slug: string) {
   try {
-    const { data: abranches } = await useAPI<IBranch[]>(
-      `/branches/${route.params.session_slug}`
-    );
+    const { data: abranches } = await useAPI<IBranch[]>(`/branches/`);
     branch.value = abranches.value?.find((b) => b.slug === slug) || null;
   } catch (error) {
     console.error(error);
@@ -373,15 +376,27 @@ class CourseSchedule {
 }
 
 const courses = ref<CourseSchedule[]>([]);
-
 const fetchCourses = async (uuid: string, schedule: ISchedules) => {
   try {
     if (schedule.can_subscribe) {
-      const { data: acourses } = await useAPI<ICourses[] | null>(
+      const { data: acourses } = await useAPI<ICourses[] | undefined>(
         `/courses/${uuid}/${branch_slug}`
       );
-      if (Array.isArray(acourses.value) && acourses.value.length > 0) {
-        courses.value.push(new CourseSchedule(schedule, acourses.value));
+
+      if (acourses?.value && Array.isArray(acourses.value)) {
+        const filteredCourses = acourses.value.filter((course) => {
+          return (
+            session.value?.courses &&
+            session.value.courses.filter((c) => c.uuid === course.uuid).length >
+              0
+          );
+        });
+
+        console.log(filteredCourses, "Filtered Courses");
+
+        if (filteredCourses.length > 0) {
+          courses.value.push(new CourseSchedule(schedule, filteredCourses));
+        }
       }
     }
   } catch (error) {

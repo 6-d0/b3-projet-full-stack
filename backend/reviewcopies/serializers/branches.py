@@ -9,3 +9,7 @@ class BranchListSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Branch
         fields = ["slug", "uuid", "name" , "pk", "courses"]
+class BranchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Branch
+        fields = ["slug", "uuid", "name" , "pk"]
