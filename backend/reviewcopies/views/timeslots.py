@@ -3,13 +3,12 @@ from datetime import timedelta
 from django.db.models import Exists, OuterRef, Q
 from django.shortcuts import get_object_or_404
 from django.utils.dateparse import parse_datetime
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from reviewcopies.models import Timeslot, Schedule, Registration
+from reviewcopies.models import Registration, Schedule, Timeslot
 from reviewcopies.serializers.timeslots import TimeslotSerializer
 
 
@@ -19,6 +18,7 @@ class TimeslotsByScheduleView(APIView):
     Example endpoint:
         GET /api/v1/timeslots/{schedule_id}/
     """
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
@@ -31,13 +31,13 @@ class TimeslotsByScheduleView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
 class TimeslotsByScheduleUuidView(APIView):
     """
     Retrieve all timeslots for a specific schedule.
     Example endpoint:
         GET /api/v1/timeslots/{schedule_id}/
     """
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
@@ -50,14 +50,13 @@ class TimeslotsByScheduleUuidView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
-
 class TimeslotsCreateView(APIView):
     """
     Create multiple timeslots for a specific schedule.
     Example endpoint:
         POST /api/v1/timeslots/create/
     """
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
@@ -67,10 +66,14 @@ class TimeslotsCreateView(APIView):
         duration = request.data.get("duration")
         break_duration = request.data.get("break_duration")
 
-        if not all([schedule_id, start_time_str, end_time_str, duration, break_duration]):
+        if not all(
+            [schedule_id, start_time_str, end_time_str, duration, break_duration]
+        ):
             return Response(
-                {"error": "Tous les paramètres (schedule_id, start_time, end_time, duration, break_duration) sont requis."},
-                status=status.HTTP_400_BAD_REQUEST
+                {
+                    "error": "Tous les paramètres (schedule_id, start_time, end_time, duration, break_duration) sont requis."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         schedule = get_object_or_404(Schedule, id=schedule_id)
@@ -88,14 +91,12 @@ class TimeslotsCreateView(APIView):
             return Response(
                 {
                     "error_code": "INVALID_PARAMETERS",
-                    "message": f"Paramètres invalides : {str(e)}"
+                    "message": f"Paramètres invalides : {str(e)}",
                 },
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        conflicting_timeslots = Timeslot.objects.filter(
-            schedule=schedule
-        ).filter(
+        conflicting_timeslots = Timeslot.objects.filter(schedule=schedule).filter(
             Q(begin_time__lt=end_time, end_time__gt=start_time)
         )
 
@@ -105,9 +106,9 @@ class TimeslotsCreateView(APIView):
                 {
                     "error_code": "TIMESLOT_CONFLICT",
                     "message": "Des timeslots existent déjà dans cette plage horaire.",
-                    "conflicting_timeslots": conflict_serializer.data
+                    "conflicting_timeslots": conflict_serializer.data,
                 },
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         current_start_time = start_time
@@ -119,7 +120,7 @@ class TimeslotsCreateView(APIView):
             timeslot = Timeslot(
                 begin_time=current_start_time,
                 end_time=current_end_time,
-                schedule=schedule
+                schedule=schedule,
             )
             timeslots.append(timeslot)
 
@@ -127,8 +128,10 @@ class TimeslotsCreateView(APIView):
 
         if not timeslots:
             return Response(
-                {"error": "Aucun timeslot valide n'a été généré avec les paramètres fournis."},
-                status=status.HTTP_400_BAD_REQUEST
+                {
+                    "error": "Aucun timeslot valide n'a été généré avec les paramètres fournis."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         Timeslot.objects.bulk_create(timeslots)
@@ -141,11 +144,17 @@ class AvailableTimeSlotView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        available_timeslots = Timeslot.objects.filter(
-            schedule__uuid=kwargs["uuid"],
-        ).annotate(
-            has_registration=Exists(Registration.objects.filter(slot=OuterRef('pk')))
-        ).filter(has_registration=False)
+        available_timeslots = (
+            Timeslot.objects.filter(
+                schedule__uuid=kwargs["uuid"],
+            )
+            .annotate(
+                has_registration=Exists(
+                    Registration.objects.filter(slot=OuterRef("pk"))
+                )
+            )
+            .filter(has_registration=False)
+        )
 
         serializer = TimeslotSerializer(available_timeslots, many=True)
         return Response(serializer.data)

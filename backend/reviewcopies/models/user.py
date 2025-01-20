@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
 from reviewcopies.models import BaseModel
 
 __all__ = ["User"]
@@ -7,10 +8,11 @@ __all__ = ["User"]
 
 class User(BaseModel, AbstractUser):
     ROLE_CHOICES = (
-        ('student', 'Student'),
-        ('teacher', 'Teacher'),
-        ('admin', 'Admin'),
+        ("student", "Student"),
+        ("teacher", "Teacher"),
+        ("admin", "Admin"),
     )
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES,default='student')
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="student")
+
     class Meta(BaseModel.Meta, AbstractUser.Meta):
         pass

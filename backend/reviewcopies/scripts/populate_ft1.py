@@ -4,7 +4,7 @@ from pathlib import Path
 
 import django
 import yaml
-from django.db import transaction, IntegrityError
+from django.db import IntegrityError, transaction
 
 DIR = Path(__file__).parent
 sys.path.insert(0, str(DIR.parent.parent))
@@ -34,13 +34,16 @@ for user in user_data:
     try:
         password = user.pop("password")
         user_instance, created = models.User.objects.get_or_create(
-            username=user.get("username"),
-            defaults=user
+            username=user.get("username"), defaults=user
         )
         if created:
             user_instance.set_password(password)
-            user_instance.role = 'student' if user_instance.username.startswith('e') else 'teacher'
-            user_instance.role = 'admin' if user_instance.is_superuser else user_instance.role
+            user_instance.role = (
+                "student" if user_instance.username.startswith("e") else "teacher"
+            )
+            user_instance.role = (
+                "admin" if user_instance.is_superuser else user_instance.role
+            )
             user_instance.full_clean()
             user_instance.save()
             print(f"Utilisateur '{user_instance.username}' créé avec succès.")

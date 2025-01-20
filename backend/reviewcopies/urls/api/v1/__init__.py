@@ -7,6 +7,6 @@ urlpatterns = [
     path("schedules/", include("reviewcopies.urls.api.v1.schedules")),
     path("user/", include("reviewcopies.urls.api.v1.users")),
     path("registrations/", include("reviewcopies.urls.api.v1.registrations")),
-    path("timeslots/",include("reviewcopies.urls.api.v1.timeslots")),
+    path("timeslots/", include("reviewcopies.urls.api.v1.timeslots")),
     path("courses/", include("reviewcopies.urls.api.v1.courses")),
 ]
