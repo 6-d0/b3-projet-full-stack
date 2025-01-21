@@ -48,40 +48,60 @@ export default defineComponent({
         console.error("Erreur lors de la déconnexion:", error);
       }
     },
+     isActiveRoute(path: string): boolean {
+      return this.$route.path === path;
+    },
   },
 });
 </script>
-
 <template>
   <header
     class="lg:px-16 px-4 bg-white flex flex-wrap items-center py-4 shadow-md mb-4 static w-full"
   >
     <div class="flex-1 flex justify-between items-center">
-      <a href="/" class="text-xl">reviewcopies</a>
-    </div>
+  <NuxtLink to="/" class="flex items-center space-x-4">
+    <img src="/images/HERS.png" alt="HERS Logo" class="h-20 w-auto" />
+    <span class="text-xl font-semibold text-gray-700">Reviewcopies</span>
+  </NuxtLink>
+</div>
+
     <div class="hidden md:flex md:items-center md:w-auto w-full" id="menu">
       <nav>
         <ul
           class="md:flex items-center justify-between text-base text-gray-700 pt-4 md:pt-0"
         >
           <NuxtLink to="/">
-            <li class="md:p-4 py-3 px-0 block hover:bg-gray-50">Accueil</li>
+            <li
+              class="md:p-4 py-3 px-0 block hover:bg-gray-50"
+              :class="{ 'text-blue-500 font-bold': isActiveRoute('/') }"
+            >
+              Accueil
+            </li>
           </NuxtLink>
-          <li v-if="isStudent" class="md:p-4 py-3 px-0 block hover:bg-gray-50">
-            <NuxtLink to="/timeslots/my-timeslots"> Mes inscriptions </NuxtLink>
+
+          <li
+            v-if="isStudent"
+            class="md:p-4 py-3 px-0 block hover:bg-gray-50"
+            :class="{ 'text-blue-500 font-bold': isActiveRoute('/timeslots/my-timeslots') }"
+          >
+            <NuxtLink to="/timeslots/my-timeslots">Mes inscriptions</NuxtLink>
           </li>
+
           <NuxtLink to="/schedules/">
             <li
               class="md:p-4 py-3 px-0 block hover:bg-gray-50"
               v-if="user?.role === 'teacher'"
+              :class="{ 'text-blue-500 font-bold': isActiveRoute('/schedules/') }"
             >
               Créer un planning
             </li>
           </NuxtLink>
+
           <NuxtLink to="/schedules/my-schedules">
             <li
               class="md:p-4 py-3 px-0 block hover:bg-gray-50"
               v-if="isTeacher"
+              :class="{ 'text-blue-500 font-bold': isActiveRoute('/schedules/my-schedules') }"
             >
               Mes plannings
             </li>
@@ -105,14 +125,27 @@ export default defineComponent({
               </NuxtLink>
             </ul>
           </li>
-          <li class="md:p-4 py-3 px-0 block" v-if="isAdmin">
-            <NuxtLink to="/sessions/create/"> Créer une session </NuxtLink>
+
+          <li
+            class="md:p-4 py-3 px-0 block hover:bg-gray-50"
+            v-if="isAdmin"
+            :class="{ 'text-blue-500 font-bold': isActiveRoute('/sessions/create/') }"
+          >
+            <NuxtLink to="/sessions/create/">Créer une session</NuxtLink>
           </li>
+          <li
+            class="md:p-4 py-3 px-0 block hover:bg-gray-50"
+            v-if="isAdmin"
+            :class="{ 'text-blue-500 font-bold': isActiveRoute('/sections/create/') }"
+          >
+            <NuxtLink to="/sections/create/">Créer une section</NuxtLink>
+          </li>
+
           <li
             class="md:p-6 py-4 px-0 block relative group cursor-pointer hover:bg-gray-50"
           >
             <span
-              class="cursor-pointer hover:text-gray-500 text-lg font-semibold"
+              class="cursor-pointer hover:text-gray-500 text-lg font-semibold text-[#E5007A]"
               v-if="user?.last_name && user.first_name"
             >
               {{ user?.last_name.toUpperCase() }} {{ user?.first_name }}
