@@ -11,10 +11,7 @@
 
       <!-- Nom de la Branche -->
       <div class="mb-6">
-        <label
-          for="name"
-          class="block text-sm font-medium text-gray-700"
-        >
+        <label for="name" class="block text-sm font-medium text-gray-700">
           Nom de la Branche
         </label>
         <input
@@ -42,32 +39,6 @@ import { ref } from "vue";
 import { useAPI } from "~/composables/useAPI";
 import Navbar from "~/components/ui/navbar/Navbar.vue";
 
-// Définir un type pour la réponse de l'API
-interface Branch {
-  slug: string;
-  uuid: string;
-  name: string;
-  pk: number;
-  courses: Course[];
-}
-
-interface Course {
-  uuid: string;
-  id: number;
-  name: string;
-  slug: string;
-  teacher_name: string;
-  teacher: {
-    uuid: string;
-    username: string;
-    pk: number;
-    last_name: string;
-    first_name: string;
-    role: string;
-    email: string;
-  };
-}
-
 export default {
   components: {
     Navbar,
@@ -86,14 +57,14 @@ export default {
       };
 
       try {
-        const { data: responseData, error } = await useAPI<Branch[]>(
+        const { data: responseData, error } = await useAPI<IBranch[]>(
           `/branches/create/`,
           {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
               "Content-Type": "application/json",
-              "X-CSRFToken": `${userStore().token}`, // Assurez-vous que cela récupère bien le token
+              "X-CSRFToken": `${userStore().token}`,
             },
             credentials: "include",
           }
